@@ -4,774 +4,2542 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Store — Enny's Elegance &amp; Co</title>
+
+<!-- ══════════════════════════════════════════
+     TYPEFACES
+     Cormorant Garamond → titles as architecture
+     Jost              → UI chrome, metadata, labels
+══════════════════════════════════════════ -->
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@200;300;400;500;600&display=swap" rel="stylesheet"/>
+
 <style>
+/* ══════════════════════════════════════════════════════════════
+   DESIGN TOKEN SYSTEM
+   Dark  = "Midnight Gold"     — absolute black, amber glow, glass
+   Light = "Monochromatic Editorial" — Vogue-white, ink-black, zero gold
+══════════════════════════════════════════════════════════════ */
+:root {
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sans:  'Jost', system-ui, sans-serif;
 
-/* ══ THEME VARIABLES ══ */
-:root,[data-theme="dark"]{
-  --bg:#050505;--bg2:#0d0d0d;--bg3:#111111;
-  --surface:rgba(255,255,255,.025);
-  --border:rgba(212,175,55,.1);--border-h:rgba(212,175,55,.3);
-  --text:#fff;--text2:#cfcfcf;--text3:#888;
-  --gold:#D4AF37;--gold-l:#F5D76E;--gold-d:#A8841F;
-  --wa1:#25D366;--wa2:#128C7E;
-  --card-bg:#0d0d0d;--card-bg-h:#111;
-  --sidebar-bg:#0d0d0d;
-  --nav-bg:rgba(5,5,5,.97);
-  --toolbar-bg:rgba(13,13,13,.98);
-  --shadow:0 20px 50px rgba(0,0,0,.6);
+  /* ── DARK PALETTE ── */
+  --bg:           #000000;
+  --bg-raise:     #080808;
+  --bg-card:      #0c0c0c;
+  --bg-card-h:    #111111;
+  --bg-glass:     rgba(255,255,255,0.025);
+  --bg-nav:       rgba(0,0,0,0.94);
+  --bg-sidebar:   #080808;
+  --bg-modal:     #0c0c0c;
+  --bg-panel:     #080808;
+  --bg-img:       linear-gradient(145deg,#141008,#090703);
+
+  --gold:         #D4AF37;
+  --gold-bright:  #F5D76E;
+  --gold-deep:    #A8841F;
+  --gold-glow:    rgba(212,175,55,0.14);
+  --gold-rim:     rgba(212,175,55,0.12);
+  --gold-trace:   rgba(212,175,55,0.05);
+
+  --ink:          #FFFFFF;
+  --ink-2:        rgba(255,255,255,0.72);
+  --ink-3:        rgba(255,255,255,0.42);
+  --ink-mute:     rgba(255,255,255,0.18);
+
+  --rule:         rgba(212,175,55,0.10);
+  --rule-h:       rgba(212,175,55,0.28);
+
+  --wa1:          #25D366;
+  --wa2:          #128C7E;
+
+  /* Shadows — deep oblique, no soft diffuse */
+  --shade-card:   0 1px 0 rgba(212,175,55,0.06), 0 20px 50px rgba(0,0,0,0.55);
+  --shade-hover:  0 2px 0 rgba(212,175,55,0.18), 0 32px 80px rgba(0,0,0,0.7), 0 0 48px rgba(212,175,55,0.06);
+  --shade-modal:  0 0 0 1px rgba(212,175,55,0.15), 0 40px 100px rgba(0,0,0,0.85);
+
+  /* Geometry — zero radius in dark mode (gallery walls) */
+  --radius: 0px;
 }
-[data-theme="light"]{
-  --bg:#f8f6f0;--bg2:#fff;--bg3:#f2efe8;
-  --surface:rgba(0,0,0,.03);
-  --border:rgba(168,132,31,.15);--border-h:rgba(168,132,31,.4);
-  --text:#1a1a1a;--text2:#4a4a4a;--text3:#999;
-  --gold:#A8841F;--gold-l:#c9a227;--gold-d:#8a6a14;
-  --card-bg:#fff;--card-bg-h:#fdf9ee;
-  --sidebar-bg:#fff;
-  --nav-bg:rgba(248,246,240,.97);
-  --toolbar-bg:rgba(255,255,255,.98);
-  --shadow:0 10px 40px rgba(0,0,0,.08);
+
+/* ══════════════════════════════════════════════════════════════
+   LIGHT THEME — "IVORY OPULENCE"
+   The warmth of a Cartier boutique in morning light.
+   Champagne ivory ground, antique gold accents, rose-gold shimmer.
+   NOT black-and-white — richly warm, luminous, dripping in gold.
+
+   PALETTE:
+   Ground:   #FAF7F2  — warm ivory parchment
+   Surface:  #FFF9F0  — champagne white
+   Accent-1: #C9A84C  — antique gold (primary)
+   Accent-2: #8A6514  — deep amber (depth)
+   Accent-3: #E8C97A  — champagne gold (shimmer)
+   Ink:      #1E1208  — deep espresso (warm, not cold black)
+══════════════════════════════════════════════════════════════ */
+[data-theme="light"] {
+  --bg:           #FAF7F2;
+  --bg-raise:     #FFF9F0;
+  --bg-card:      #FFFCF5;
+  --bg-card-h:    #FFF6E8;
+  --bg-glass:     rgba(201,168,76,0.05);
+  --bg-nav:       rgba(250,247,242,0.96);
+  --bg-sidebar:   #FFF9F0;
+  --bg-modal:     #FFFCF5;
+  --bg-panel:     #FFF9F0;
+  --bg-img:       linear-gradient(145deg,#F0E0B0,#E8D090);
+
+  /* Fully restored warm gold spectrum */
+  --gold:         #C9A84C;
+  --gold-bright:  #E8C97A;
+  --gold-deep:    #8A6514;
+  --gold-glow:    rgba(201,168,76,0.18);
+  --gold-rim:     rgba(201,168,76,0.25);
+  --gold-trace:   rgba(201,168,76,0.08);
+
+  /* Warm espresso ink — NOT cold black */
+  --ink:          #1E1208;
+  --ink-2:        #4A3218;
+  --ink-3:        #8A6A3C;
+  --ink-mute:     #C4A87A;
+
+  /* Warm gold hairline borders */
+  --rule:         rgba(201,168,76,0.18);
+  --rule-h:       rgba(201,168,76,0.45);
+
+  /* Warm amber shadows */
+  --shade-card:   0 1px 0 rgba(201,168,76,0.20), 0 8px 32px rgba(100,60,0,0.07);
+  --shade-hover:  0 2px 0 rgba(201,168,76,0.35), 0 20px 60px rgba(100,60,0,0.13), 0 0 40px rgba(201,168,76,0.10);
+  --shade-modal:  0 0 0 1px rgba(201,168,76,0.22), 0 40px 100px rgba(80,40,0,0.18);
 }
 
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:'Jost',sans-serif;font-weight:300;overflow-x:hidden;transition:background .35s,color .35s}
-::-webkit-scrollbar{width:3px}
-::-webkit-scrollbar-track{background:var(--bg)}
-::-webkit-scrollbar-thumb{background:var(--gold)}
-
-/* NAV */
-nav{position:sticky;top:0;z-index:900;height:66px;display:flex;align-items:center;justify-content:space-between;padding:0 4%;background:var(--nav-bg);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);transition:background .35s,border-color .35s}
-.nav-l{display:flex;align-items:center;gap:1.4rem}
-.back-lnk{font-size:.67rem;letter-spacing:.18em;text-transform:uppercase;color:var(--text3);text-decoration:none;transition:color .25s;border-left:1px solid var(--border);padding-left:1.4rem;display:flex;align-items:center;gap:.4rem}
-.back-lnk:hover{color:var(--gold)}
-.nav-logo{display:flex;align-items:center;gap:11px;text-decoration:none}
-.nav-logo img{width:40px;height:40px;border-radius:50%;object-fit:cover;border:1px solid var(--border-h)}
-.nav-logo span{font-family:'Cormorant Garamond',serif;font-size:1rem;color:var(--gold-l);font-weight:500}
-.nav-r{display:flex;align-items:center;gap:.7rem}
-.cart-pill{display:flex;align-items:center;gap:.55rem;background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;padding:.43rem .9rem;cursor:pointer;transition:all .3s;font-family:'Jost',sans-serif}
-.cart-pill:hover{border-color:var(--gold);color:var(--gold)}
-.cart-badge{background:var(--gold);color:#000;font-size:.58rem;font-weight:700;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px}
-.wa-nav{display:flex;align-items:center;gap:.45rem;background:linear-gradient(135deg,var(--wa1),var(--wa2));color:#fff;font-size:.67rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:.43rem .9rem;text-decoration:none;transition:all .3s;clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px)}
-.wa-nav:hover{filter:brightness(1.1);box-shadow:0 0 16px rgba(37,211,102,.3)}
-.theme-toggle{background:var(--surface);border:1px solid var(--border);color:var(--gold);font-family:'Jost',sans-serif;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;padding:.43rem .8rem;cursor:pointer;transition:all .3s;white-space:nowrap}
-.theme-toggle:hover{border-color:var(--gold);background:rgba(212,175,55,.07)}
-
-/* BANNER */
-.store-banner{padding:4rem 4% 2.8rem;background:linear-gradient(160deg,var(--bg2),var(--bg));border-bottom:1px solid var(--border);position:relative;overflow:hidden;transition:background .35s}
-.store-banner::after{content:'';position:absolute;right:-80px;top:-80px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(212,175,55,.05),transparent 70%);pointer-events:none}
-.sb-eye{font-size:.63rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:.6rem;margin-bottom:.7rem}
-.sb-eye::before{content:'';width:22px;height:1px;background:var(--gold)}
-.store-banner h1{font-family:'Cormorant Garamond',serif;font-size:clamp(1.9rem,5vw,3rem);font-weight:300;color:var(--text);line-height:1.1;margin-bottom:.6rem}
-.store-banner h1 em{font-style:italic;color:var(--gold-l)}
-.store-banner p{color:var(--text2);font-size:.87rem;max-width:460px;line-height:1.75}
-
-/* TRUST */
-.store-trust{background:var(--bg3);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:1.3rem 4%;display:flex;flex-wrap:wrap;justify-content:space-around;gap:.8rem;transition:background .35s}
-.st-item{display:flex;align-items:center;gap:.55rem;font-size:.73rem;color:var(--text2)}
-.st-check{color:var(--gold);font-size:.8rem}
-
-/* TOOLBAR */
-.toolbar{position:sticky;top:66px;z-index:899;padding:1.1rem 4%;background:var(--toolbar-bg);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.9rem;flex-wrap:wrap;transition:background .35s}
-.search-wrap{position:relative;flex:1;min-width:160px;max-width:320px}
-.search-wrap input{width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'Jost',sans-serif;font-size:.82rem;padding:.6rem 1rem .6rem 2.3rem;outline:none;transition:border .3s}
-.search-wrap input:focus{border-color:var(--border-h)}
-.search-wrap input::placeholder{color:var(--text3)}
-.search-icon{position:absolute;left:.72rem;top:50%;transform:translateY(-50%);font-size:.78rem;opacity:.4;pointer-events:none}
-.sort-sel{background:var(--surface);border:1px solid var(--border);color:var(--text2);font-family:'Jost',sans-serif;font-size:.77rem;padding:.6rem .9rem;outline:none;cursor:pointer;min-width:150px}
-.sort-sel option{background:var(--bg2);color:var(--text)}
-.filter-toggle{display:none;align-items:center;gap:.4rem;background:transparent;border:1px solid var(--border);color:var(--gold);font-family:'Jost',sans-serif;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;padding:.52rem .9rem;cursor:pointer;transition:all .3s}
-.filter-toggle:hover{background:var(--surface)}
-.result-label{font-size:.75rem;color:var(--text3);margin-left:auto;letter-spacing:.05em}
-
-/* LAYOUT */
-.layout{display:flex;min-height:70vh}
-
-/* SIDEBAR */
-.sidebar{width:255px;flex-shrink:0;background:var(--sidebar-bg);border-right:1px solid var(--border);padding:1.8rem 1.5rem;position:sticky;top:113px;height:calc(100vh - 113px);overflow-y:auto;transition:background .35s,transform .4s cubic-bezier(.4,0,.2,1),left .4s}
-.sidebar::-webkit-scrollbar{width:2px}
-.sb-sec{margin-bottom:2rem}
-.sb-sec h4{font-size:.6rem;letter-spacing:.27em;text-transform:uppercase;color:var(--gold);margin-bottom:.9rem;padding-bottom:.5rem;border-bottom:1px solid var(--border)}
-.cat-btn{width:100%;display:flex;align-items:center;gap:.65rem;padding:.58rem .65rem;background:transparent;border:1px solid transparent;color:var(--text2);font-family:'Jost',sans-serif;font-size:.79rem;cursor:pointer;transition:all .25s;text-align:left;margin-bottom:2px}
-.cat-btn:hover,.cat-btn.active{background:var(--surface);border-color:var(--border);color:var(--text)}
-.cat-btn.active .cname{color:var(--gold-l)}
-.cicon{font-size:.9rem;flex-shrink:0}
-.cname{flex:1}
-.cct{font-size:.64rem;color:var(--text3);background:var(--surface);padding:.1rem .38rem}
-.price-row{display:grid;grid-template-columns:1fr 1fr;gap:.55rem;margin-bottom:.7rem}
-.price-row input{background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'Jost',sans-serif;font-size:.75rem;padding:.48rem .55rem;outline:none;width:100%}
-.price-row input:focus{border-color:var(--border-h)}
-.price-row input::placeholder{color:var(--text3)}
-.rat-opts{display:flex;flex-direction:column;gap:.38rem}
-.r-opt{display:flex;align-items:center;gap:.5rem;font-size:.77rem;color:var(--text2);cursor:pointer;padding:.25rem 0;transition:color .25s}
-.r-opt:hover{color:var(--gold-l)}
-.r-opt input{accent-color:var(--gold);cursor:pointer}
-.clear-all{width:100%;background:transparent;border:1px solid var(--border);color:var(--text3);font-family:'Jost',sans-serif;font-size:.67rem;letter-spacing:.14em;text-transform:uppercase;padding:.48rem;cursor:pointer;transition:all .3s;margin-top:.4rem}
-.clear-all:hover{border-color:var(--gold);color:var(--gold)}
-
-/* PRODUCTS */
-.products-area{flex:1;padding:1.8rem;min-width:0}
-.p-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:1.4rem;margin-bottom:2.5rem}
-
-/* PRODUCT CARD */
-.pc{background:var(--card-bg);border:1px solid var(--border);overflow:hidden;position:relative;transition:border-color .4s,box-shadow .4s,transform .4s,background .35s}
-.pc:hover{border-color:var(--border-h);box-shadow:var(--shadow);transform:translateY(-5px);background:var(--card-bg-h)}
-.pc-badge{position:absolute;top:.8rem;left:.8rem;z-index:3;background:linear-gradient(135deg,var(--gold),var(--gold-d));color:#000;font-size:.56rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;padding:.2rem .6rem}
-.pc-img{aspect-ratio:1;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;background:linear-gradient(135deg,#1a1408,#0e0b05)}
-[data-theme="light"] .pc-img{background:linear-gradient(135deg,#f5ead0,#ede0b8)}
-.pc-icon{font-size:3rem;opacity:.2;transition:all .5s}
-.pc:hover .pc-icon{opacity:.32;transform:scale(1.07) rotate(2deg)}
-.pc-glow{position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(212,175,55,.07),transparent 70%);opacity:0;transition:opacity .4s;pointer-events:none}
-.pc:hover .pc-glow{opacity:1}
-.pc-overlay{position:absolute;inset:0;background:transparent;transition:background .3s;display:flex;align-items:center;justify-content:center}
-.pc:hover .pc-overlay{background:rgba(0,0,0,.28)}
-.pc-qv{opacity:0;background:rgba(212,175,55,.92);color:#000;font-size:.59rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:.46rem 1rem;border:none;cursor:pointer;font-family:'Jost',sans-serif;transition:opacity .3s}
-.pc:hover .pc-qv{opacity:1}
-.pc-wish{position:absolute;top:.8rem;right:.8rem;z-index:3;width:30px;height:30px;background:rgba(5,5,5,.6);border:1px solid var(--border);color:var(--text2);font-size:.85rem;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center;opacity:0}
-.pc:hover .pc-wish,.pc-wish.liked{opacity:1}
-.pc-wish.liked{color:#e74c3c;border-color:#e74c3c;background:rgba(231,76,60,.1)}
-.pc-info{padding:1.1rem}
-.pc-cat{font-size:.59rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:.26rem;opacity:.85}
-.pc-name{font-family:'Cormorant Garamond',serif;font-size:1.05rem;color:var(--text);margin-bottom:.26rem;font-weight:400;line-height:1.28}
-.pc-price{color:var(--gold);font-size:.87rem;font-weight:500;margin-bottom:.42rem}
-.pc-price s{color:var(--text3);font-size:.73rem;margin-left:.3rem}
-.pc-stars{font-size:.67rem;color:var(--gold);margin-bottom:.85rem;letter-spacing:.06em}
-.pc-stars span{color:var(--text3);font-size:.64rem;margin-left:.2rem}
-.pc-actions{display:flex;flex-direction:column;gap:.42rem}
-.btn-wa-p{display:flex;align-items:center;justify-content:center;gap:.42rem;background:linear-gradient(135deg,var(--wa1),var(--wa2));color:#fff;border:none;font-family:'Jost',sans-serif;font-size:.63rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:.5rem;cursor:pointer;transition:all .3s;text-decoration:none}
-.btn-wa-p:hover{filter:brightness(1.1);box-shadow:0 0 14px rgba(37,211,102,.28)}
-.btn-cart-p{display:flex;align-items:center;justify-content:center;gap:.42rem;background:transparent;border:1px solid var(--border);color:var(--gold);font-family:'Jost',sans-serif;font-size:.61rem;font-weight:400;letter-spacing:.08em;text-transform:uppercase;padding:.43rem;cursor:pointer;transition:all .3s}
-.btn-cart-p:hover{background:var(--surface);border-color:var(--gold)}
-.btn-cart-p.added{border-color:#2ecc71;color:#2ecc71}
-
-/* EMPTY STATE */
-.empty-state{grid-column:1/-1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5rem 2rem;text-align:center}
-.empty-icon{font-size:3.2rem;opacity:.2;margin-bottom:1.3rem}
-.empty-state h3{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:300;color:var(--text);margin-bottom:.5rem}
-.empty-state p{font-size:.84rem;color:var(--text2);margin-bottom:1.8rem;max-width:300px;line-height:1.75}
-.btn-gold-sm{background:linear-gradient(135deg,var(--gold),var(--gold-d));color:#000;border:none;font-family:'Jost',sans-serif;font-size:.68rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;padding:.65rem 1.7rem;cursor:pointer;clip-path:polygon(7px 0,100% 0,100% calc(100% - 7px),calc(100% - 7px) 100%,0 100%,0 7px)}
-
-/* PAGINATION */
-.pagination{display:flex;align-items:center;justify-content:center;gap:.38rem;padding:1rem 0 2rem}
-.pg-btn{width:35px;height:35px;background:transparent;border:1px solid var(--border);color:var(--text2);font-family:'Jost',sans-serif;font-size:.79rem;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center}
-.pg-btn:hover{border-color:var(--gold);color:var(--gold)}
-.pg-btn.active{background:var(--gold);border-color:var(--gold);color:#000;font-weight:600}
-.pg-dots{color:var(--text3);padding:0 .28rem;font-size:.79rem}
-
-/* MODAL */
-.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:2000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(12px)}
-.modal-ov.open{opacity:1;pointer-events:auto}
-.modal-box{background:var(--bg2);border:1px solid var(--border-h);width:92%;max-width:720px;max-height:92vh;overflow-y:auto;position:relative;transform:translateY(26px) scale(.97);transition:transform .4s cubic-bezier(.2,0,.1,1)}
-.modal-ov.open .modal-box{transform:none}
-.modal-close{position:absolute;top:1rem;right:1rem;background:transparent;border:1px solid var(--border);color:var(--text2);width:32px;height:32px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .3s;z-index:2}
-.modal-close:hover{border-color:var(--gold);color:var(--gold)}
-.modal-body{display:grid;grid-template-columns:1fr 1fr}
-.modal-left{display:flex;align-items:center;justify-content:center;font-size:5.5rem;background:linear-gradient(135deg,#1a1408,#0e0b05);aspect-ratio:1;position:relative;overflow:hidden}
-[data-theme="light"] .modal-left{background:linear-gradient(135deg,#f5ead0,#ede0b8)}
-.modal-left::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(212,175,55,.06),transparent 70%)}
-.modal-r{padding:2rem 1.8rem}
-.m-cat{font-size:.59rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:.4rem}
-.m-name{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:300;color:var(--text);line-height:1.15;margin-bottom:.4rem}
-.m-price{color:var(--gold);font-size:1.25rem;font-weight:500;margin-bottom:.3rem}
-.m-price s{color:var(--text3);font-size:.92rem;margin-left:.35rem}
-.m-stars{font-size:.79rem;color:var(--gold);margin-bottom:1rem}
-.m-div{width:38px;height:1px;background:linear-gradient(90deg,var(--gold),transparent);margin-bottom:1rem}
-.m-desc{font-size:.82rem;color:var(--text2);line-height:1.85;margin-bottom:1.5rem}
-.m-actions{display:flex;flex-direction:column;gap:.6rem}
-.m-wa{display:flex;align-items:center;justify-content:center;gap:.5rem;background:linear-gradient(135deg,var(--wa1),var(--wa2));color:#fff;font-family:'Jost',sans-serif;font-size:.7rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:.75rem;text-decoration:none;transition:all .3s;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)}
-.m-wa:hover{box-shadow:0 0 22px rgba(37,211,102,.32)}
-.m-details{display:flex;align-items:center;justify-content:center;gap:.5rem;background:transparent;border:1px solid var(--border);color:var(--text2);font-family:'Jost',sans-serif;font-size:.67rem;font-weight:400;letter-spacing:.12em;text-transform:uppercase;padding:.62rem;text-decoration:none;transition:all .3s}
-.m-details:hover{border-color:var(--border-h);color:var(--text)}
-.m-cart{display:flex;align-items:center;justify-content:center;gap:.5rem;background:transparent;border:1px solid var(--border);color:var(--text3);font-family:'Jost',sans-serif;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;padding:.56rem;cursor:pointer;transition:all .3s}
-.m-cart:hover{border-color:var(--border-h);color:var(--text)}
-
-/* PANELS */
-.panel-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1799;opacity:0;pointer-events:none;transition:opacity .4s;backdrop-filter:blur(4px)}
-.panel-overlay.show{opacity:1;pointer-events:auto}
-.cart-panel,.wish-panel{position:fixed;top:0;height:100vh;background:var(--bg2);z-index:1800;transition:right .4s cubic-bezier(.4,0,.2,1),background .35s;display:flex;flex-direction:column}
-.cart-panel{right:-370px;width:350px;border-left:1px solid var(--border)}
-.wish-panel{right:-330px;width:310px;border-left:1px solid var(--border)}
-.cart-panel.open{right:0}.wish-panel.open{right:0}
-.panel-header{padding:1.4rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.panel-header h3{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:400;color:var(--text)}
-.panel-close{background:transparent;border:1px solid var(--border);color:var(--text2);width:30px;height:30px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.9rem;transition:all .3s}
-.panel-close:hover{border-color:var(--gold);color:var(--gold)}
-.panel-body{flex:1;overflow-y:auto;padding:1.4rem}
-.cart-empty,.wish-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center}
-.ce-icon,.we-icon{font-size:2.8rem;opacity:.18;margin-bottom:1rem;display:block}
-.cart-empty p,.wish-empty p{font-size:.83rem;color:var(--text3);line-height:1.7;max-width:200px}
-.cart-item,.wish-item{display:flex;align-items:center;gap:.85rem;padding:.85rem 0;border-bottom:1px solid var(--border)}
-.ci-icon,.wi-icon{font-size:1.4rem;width:42px;height:42px;background:var(--surface);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.ci-info,.wi-info{flex:1;min-width:0}
-.ci-name,.wi-name{font-size:.81rem;color:var(--text);font-family:'Cormorant Garamond',serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ci-price,.wi-price{font-size:.74rem;color:var(--gold);margin-top:.1rem}
-.ci-qty{display:flex;align-items:center;gap:.38rem;margin-top:.38rem}
-.ci-qty button{width:22px;height:22px;background:var(--surface);border:1px solid var(--border);color:var(--gold);cursor:pointer;font-size:.8rem;transition:all .25s;display:flex;align-items:center;justify-content:center}
-.ci-qty button:hover{background:rgba(212,175,55,.1)}
-.ci-qty span{font-size:.77rem;color:var(--text);min-width:20px;text-align:center}
-.ci-remove,.wi-remove{background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:.87rem;padding:4px;transition:color .25s;flex-shrink:0}
-.ci-remove:hover,.wi-remove:hover{color:#e74c3c}
-.cart-footer{padding:1.4rem;border-top:1px solid var(--border)}
-.cart-total{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.1rem}
-.cart-total span{font-size:.76rem;color:var(--text2);letter-spacing:.08em;text-transform:uppercase}
-.cart-total strong{font-family:'Cormorant Garamond',serif;font-size:1.25rem;color:var(--gold)}
-.cart-wa-btn{display:flex;align-items:center;justify-content:center;gap:.5rem;background:linear-gradient(135deg,var(--wa1),var(--wa2));color:#fff;font-family:'Jost',sans-serif;font-size:.7rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:.75rem;width:100%;text-decoration:none;transition:all .3s;clip-path:polygon(7px 0,100% 0,100% calc(100% - 7px),calc(100% - 7px) 100%,0 100%,0 7px)}
-.cart-wa-btn:hover{box-shadow:0 0 20px rgba(37,211,102,.3)}
-
-/* FLOAT WA */
-.float-wa{position:fixed;bottom:2rem;right:2rem;z-index:990;display:flex;flex-direction:column;align-items:flex-end;gap:.45rem}
-.float-wa-btn{background:linear-gradient(135deg,var(--wa1),var(--wa2));color:#fff;width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;text-decoration:none;box-shadow:0 4px 18px rgba(37,211,102,.4);transition:all .35s;animation:waPulse 2.5s ease-in-out infinite}
-.float-wa-btn:hover{transform:scale(1.1)}
-.float-wa-tip{background:var(--bg2);color:var(--text);font-size:.64rem;letter-spacing:.08em;padding:.26rem .68rem;border:1px solid var(--border);white-space:nowrap;opacity:0;transform:translateX(8px);transition:all .3s;pointer-events:none}
-.float-wa:hover .float-wa-tip{opacity:1;transform:none}
-
-/* TOAST */
-.toast{position:fixed;bottom:5.5rem;right:2rem;background:linear-gradient(135deg,var(--gold),var(--gold-d));color:#000;font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.68rem 1.25rem;z-index:9999;transform:translateY(110px);opacity:0;transition:all .4s;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);pointer-events:none;max-width:270px}
-.toast.show{transform:translateY(0);opacity:1}
-
-@keyframes waPulse{0%,100%{box-shadow:0 4px 18px rgba(37,211,102,.4)}50%{box-shadow:0 4px 26px rgba(37,211,102,.65),0 0 0 7px rgba(37,211,102,.07)}}
-
-/* RESPONSIVE */
-@media(max-width:900px){
-  .sidebar{position:fixed;left:-270px;top:0;height:100vh;z-index:1000;padding-top:75px}
-  .sidebar.open{left:0}
-  .filter-toggle{display:flex}
-  .layout{flex-direction:column}
-  .products-area{padding:1.3rem .9rem}
-  .modal-body{grid-template-columns:1fr}
-  .modal-left{aspect-ratio:4/3;font-size:4rem}
-  .nav-logo span{display:none}
+/* ══════════════════════════════════════════════════════════════
+   AMBIENT BACKGROUND — DARK: slow gold radial drift
+                       LIGHT: warm champagne orbs floating
+══════════════════════════════════════════════════════════════ */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 70% 20%, rgba(212,175,55,0.055) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 10% 90%, rgba(212,175,55,0.03) 0%, transparent 55%);
+  animation: ambientDrift 20s ease-in-out infinite alternate;
+  transition: opacity 0.6s;
 }
-@media(max-width:580px){
-  .p-grid{grid-template-columns:repeat(2,1fr);gap:.9rem}
-  .store-trust{display:none}
-  .back-lnk span{display:none}
-  .theme-toggle{font-size:.58rem;padding:.4rem .6rem}
-}
-@media(max-width:360px){.p-grid{grid-template-columns:1fr}}
+[data-theme="light"] body::before { opacity: 0; }
 
+@keyframes ambientDrift {
+  0%   { transform: translate(0,0) scale(1); }
+  50%  { transform: translate(-2%,1%) scale(1.03); }
+  100% { transform: translate(2%,-1%) scale(0.97); }
+}
+
+/* Light-mode floating gold orbs — champagne warmth atmosphere */
+.light-orbs {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  display: none;
+}
+[data-theme="light"] .light-orbs { display: block; }
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0;
+  transition: opacity 0.7s;
+}
+[data-theme="light"] .orb { opacity: 1; }
+
+/* Orb 1 — champagne gold, top-right */
+.orb-1 {
+  width: 620px; height: 620px;
+  background: radial-gradient(circle, rgba(232,201,122,0.22) 0%, rgba(201,168,76,0.08) 50%, transparent 75%);
+  top: -12%; right: -8%;
+  animation: orbDrift1 18s ease-in-out infinite alternate;
+}
+/* Orb 2 — antique gold, bottom-left */
+.orb-2 {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(201,168,76,0.18) 0%, rgba(184,134,11,0.06) 55%, transparent 75%);
+  bottom: 0; left: -6%;
+  animation: orbDrift2 24s ease-in-out infinite alternate;
+}
+/* Orb 3 — rose-gold warmth, center */
+.orb-3 {
+  width: 380px; height: 380px;
+  background: radial-gradient(circle, rgba(220,180,100,0.13) 0%, rgba(201,168,76,0.04) 60%, transparent 80%);
+  top: 40%; left: 38%;
+  animation: orbDrift3 28s ease-in-out infinite alternate;
+}
+
+@keyframes orbDrift1 {
+  0%   { transform: translate(0,0) scale(1); }
+  100% { transform: translate(-60px,80px) scale(1.12); }
+}
+@keyframes orbDrift2 {
+  0%   { transform: translate(0,0) scale(1); }
+  100% { transform: translate(80px,-60px) scale(1.08); }
+}
+@keyframes orbDrift3 {
+  0%   { transform: translate(0,0) scale(1) rotate(0deg); }
+  100% { transform: translate(-40px,50px) scale(1.15) rotate(8deg); }
+}
+
+/* ── GOLD SHIMMER TEXT — Light mode h1 & store title ──
+   Animated metallic sweep — like light catching actual gold leaf */
+[data-theme="light"] .store-banner h1,
+[data-theme="light"] h2.sec-title,
+[data-theme="light"] .sidebar-title {
+  background: linear-gradient(
+    105deg,
+    #2C1A00 0%,
+    #8A6514 20%,
+    #C9A84C 35%,
+    #E8C97A 42%,
+    #FFF8E1 50%,
+    #E8C97A 58%,
+    #C9A84C 65%,
+    #8A6514 80%,
+    #2C1A00 100%
+  );
+  background-size: 300% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: goldShimmer 6s cubic-bezier(0.25,1,0.5,1) infinite;
+}
+[data-theme="light"] .store-banner h1 em {
+  background: linear-gradient(135deg, #C9A84C 0%, #E8C97A 40%, #C9A84C 70%, #8A6514 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: goldShimmer 4s cubic-bezier(0.25,1,0.5,1) infinite;
+}
+@keyframes goldShimmer {
+  0%   { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+
+/* ── Light-mode warm card overrides ── */
+[data-theme="light"] .prod-card {
+  background: linear-gradient(145deg, #FFFCF5, #FFF8E8);
+  border-color: var(--rule);
+}
+[data-theme="light"] .prod-card:hover {
+  background: linear-gradient(145deg, #FFF8E8, #FFF0CC);
+  border-color: var(--rule-h);
+}
+[data-theme="light"] .prod-img-wrap { background: linear-gradient(145deg, #F0E0B0, #E8D090); }
+
+/* Light-mode filter sidebar */
+[data-theme="light"] .filter-sidebar {
+  background: #FFF9F0;
+  border-right-color: var(--rule);
+}
+[data-theme="light"] .filter-tag {
+  background: rgba(201,168,76,0.08);
+  border-color: rgba(201,168,76,0.25);
+  color: var(--ink-2);
+}
+[data-theme="light"] .filter-tag.active {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #fff;
+}
+[data-theme="light"] .filter-tag:hover:not(.active) {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+/* Light-mode cart panel */
+[data-theme="light"] .cart-panel {
+  background: #FFF9F0;
+  border-left-color: var(--rule);
+}
+[data-theme="light"] .cart-item-img { background: linear-gradient(145deg, #F0E0B0, #E8D090); }
+
+/* Light-mode modal */
+[data-theme="light"] .product-modal { background: #FFFCF5; }
+[data-theme="light"] .modal-img-wrap { background: linear-gradient(145deg, #F0E0B0, #E8D090); }
+
+/* Light-mode badges */
+[data-theme="light"] .prod-badge {
+  background: linear-gradient(135deg, #C9A84C, #8A6514);
+  color: #fff;
+}
+[data-theme="light"] .prod-badge.new-badge {
+  background: linear-gradient(135deg, #8A6514, #C9A84C);
+}
+
+/* Light-mode buttons */
+[data-theme="light"] .add-to-cart-btn {
+  background: linear-gradient(135deg, #C9A84C, #8A6514);
+  color: #fff;
+}
+[data-theme="light"] .add-to-cart-btn:hover {
+  box-shadow: 0 8px 28px rgba(201,168,76,0.40);
+}
+
+/* Light-mode store banner rings */
+[data-theme="light"] .store-banner::after { border-color: rgba(201,168,76,0.14); }
+[data-theme="light"] .store-banner::before { border-color: rgba(201,168,76,0.22); }
+
+/* Light-mode trust bar */
+[data-theme="light"] .trust-check { border-color: var(--gold); color: var(--gold-deep); }
+
+/* Light-mode pagination */
+[data-theme="light"] .page-btn.active {
+  background: var(--gold);
+  color: #fff;
+  border-color: var(--gold);
+}
+[data-theme="light"] .page-btn:hover:not(.active) {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+/* Light-mode toolbar */
+[data-theme="light"] .filter-toggle-btn:hover,
+[data-theme="light"] .sort-btn:hover { border-color: var(--gold); color: var(--gold); }
+[data-theme="light"] .search-input:focus { border-color: var(--gold); }
+
+/* Light-mode WA float */
+[data-theme="light"] .nav-logo-mark { color: var(--gold); border-color: var(--rule-h); }
+
+/* Light-mode eyebrow rules */
+[data-theme="light"] .sb-eyebrow { color: var(--gold-deep); }
+[data-theme="light"] .sb-eyebrow::before { background: var(--gold); }
+
+/* Scrollbar stays warm amber in light mode */
+[data-theme="light"]::-webkit-scrollbar-thumb { background: var(--gold); }
+
+/* ══════════════════════════════════════════════════════════════
+   BASE RESET
+══════════════════════════════════════════════════════════════ */
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-weight: 300;
+  overflow-x: hidden;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  transition:
+    background 0.5s cubic-bezier(0.25,1,0.5,1),
+    color 0.5s cubic-bezier(0.25,1,0.5,1);
+}
+
+::-webkit-scrollbar { width: 2px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--gold); }
+
+/* ══════════════════════════════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════════════════════════════ */
+#nav {
+  position: sticky;
+  top: 0;
+  z-index: 900;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4%;
+  background: var(--bg-nav);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--rule);
+  transition:
+    background 0.4s cubic-bezier(0.25,1,0.5,1),
+    border-color 0.4s;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 1.4rem;
+}
+
+.back-link {
+  font-family: var(--sans);
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-left: 1px solid var(--rule);
+  padding-left: 1.4rem;
+  transition: color 0.25s;
+}
+.back-link:hover { color: var(--gold); }
+[data-theme="light"] .back-link:hover { color: var(--gold); }
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  text-decoration: none;
+}
+.nav-logo-mark {
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--rule-h);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 1px rgba(212,175,55,0.12);
+  transition: border-color 0.4s, box-shadow 0.4s;
+}
+.nav-logo-mark::after {
+  content: '';
+  position: absolute;
+  inset: -50%;
+  width: 200%; height: 200%;
+  background: conic-gradient(
+    #000000 0deg, #D4AF37 60deg, #F5D76E 90deg, #D4AF37 120deg,
+    #000000 180deg, #D4AF37 240deg, #F5D76E 270deg, #D4AF37 300deg, #000000 360deg
+  );
+  animation: logoSpin 3s linear infinite;
+  z-index: 0;
+  opacity: 0.85;
+}
+.nav-logo-mark::before {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  background: var(--bg);
+  border-radius: 50%;
+  z-index: 1;
+  transition: background 0.5s;
+}
+.nav-logo-mark-inner {
+  font-family: var(--serif);
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: var(--gold);
+  line-height: 1;
+  position: relative;
+  z-index: 2;
+  text-shadow: 0 0 12px rgba(212,175,55,0.6);
+}
+.nav-logo-mark-img {
+  width: 100%; height: 100%;
+  object-fit: contain;
+  padding: 4px;
+  position: relative;
+  z-index: 2;
+  border-radius: 50%;
+  filter: drop-shadow(0 0 6px rgba(212,175,55,0.7)) drop-shadow(0 0 14px rgba(212,175,55,0.3));
+}
+.nav-logo:hover .nav-logo-mark {
+  box-shadow: 0 0 0 1px rgba(212,175,55,0.4), 0 0 20px rgba(212,175,55,0.25);
+}
+.nav-logo:hover .nav-logo-mark::after { animation-duration: 1.2s; }
+[data-theme="light"] .nav-logo-mark::before { background: var(--bg); }
+[data-theme="light"] .nav-logo-mark { box-shadow: 0 0 0 1px rgba(201,168,76,0.2); }
+@keyframes logoSpin {
+  to { transform: rotate(360deg); }
+}
+.nav-logo-text {
+  font-family: var(--serif);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: 0.01em;
+  line-height: 1;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+/* Theme toggle — identical pattern to index */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: transparent;
+  border: 1px solid var(--rule);
+  color: var(--ink-3);
+  font-family: var(--sans);
+  font-size: 0.58rem;
+  font-weight: 400;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 0.44rem 0.85rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.3s, color 0.3s;
+}
+.theme-toggle:hover { border-color: var(--gold); color: var(--gold); }
+[data-theme="light"] .theme-toggle:hover { border-color: var(--gold); color: var(--gold); }
+
+/* WhatsApp nav pill */
+.wa-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: linear-gradient(135deg, var(--wa1), var(--wa2));
+  color: #fff;
+  font-family: var(--sans);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.44rem 0.9rem;
+  text-decoration: none;
+  clip-path: polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px);
+  transition: filter 0.3s, box-shadow 0.3s;
+}
+.wa-nav:hover { filter: brightness(1.08); box-shadow: 0 0 16px rgba(37,211,102,0.3); }
+
+/* Cart pill */
+.cart-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--bg-glass);
+  border: 1px solid var(--rule);
+  color: var(--ink-2);
+  font-family: var(--sans);
+  font-size: 0.63rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.44rem 0.9rem;
+  cursor: pointer;
+  transition: border-color 0.3s, color 0.3s;
+}
+.cart-pill:hover { border-color: var(--gold); color: var(--gold); }
+[data-theme="light"] .cart-pill:hover { border-color: var(--gold); color: var(--gold); }
+
+.cart-badge {
+  background: var(--gold);
+  color: #000;
+  font-size: 0.55rem;
+  font-weight: 700;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+}
+[data-theme="light"] .cart-badge { background: var(--gold); color: #fff; }
+
+/* ══════════════════════════════════════════════════════════════
+   STORE BANNER — EDITORIAL HEADER
+══════════════════════════════════════════════════════════════ */
+.store-banner {
+  padding: 4.5rem 4% 3rem;
+  background: var(--bg-raise);
+  border-bottom: 1px solid var(--rule);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Ambient ring decoration */
+.store-banner::after {
+  content: '';
+  position: absolute;
+  right: -100px;
+  top: -100px;
+  width: 480px;
+  height: 480px;
+  border-radius: 50%;
+  border: 1px solid var(--rule);
+  pointer-events: none;
+}
+.store-banner::before {
+  content: '';
+  position: absolute;
+  right: -40px;
+  top: -40px;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  border: 1px solid var(--gold-rim);
+  pointer-events: none;
+}
+
+.sb-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--sans);
+  font-size: 0.6rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.8rem;
+  position: relative;
+  z-index: 1;
+}
+.sb-eyebrow::before {
+  content: '';
+  width: 20px;
+  height: 1px;
+  background: var(--gold);
+  flex-shrink: 0;
+}
+[data-theme="light"] .sb-eyebrow { color: var(--gold-deep); }
+[data-theme="light"] .sb-eyebrow::before { background: #000; }
+
+.store-banner h1 {
+  font-family: var(--serif);
+  font-size: clamp(2rem,5vw,3.2rem);
+  font-weight: 300;
+  color: var(--ink);
+  line-height: 1.1;
+  margin-bottom: 0.7rem;
+  position: relative;
+  z-index: 1;
+}
+.store-banner h1 em {
+  font-style: italic;
+  color: var(--gold);
+}
+[data-theme="light"] .store-banner h1 em { color: inherit; font-weight: 400; }
+
+.store-banner p {
+  font-size: 0.92rem;
+  color: var(--ink-2);
+  max-width: 480px;
+  line-height: 1.85;
+  position: relative;
+  z-index: 1;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TRUST BAR
+══════════════════════════════════════════════════════════════ */
+.trust-bar {
+  background: var(--bg);
+  border-bottom: 1px solid var(--rule);
+  padding: 1.1rem 4%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  gap: 0.8rem;
+}
+.trust-item {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  color: var(--ink-2);
+}
+.trust-check {
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.55rem;
+  color: var(--gold);
+  flex-shrink: 0;
+}
+[data-theme="light"] .trust-check { border-color: var(--gold); color: var(--gold-deep); }
+
+/* ══════════════════════════════════════════════════════════════
+   TOOLBAR (search, sort, filter toggle)
+══════════════════════════════════════════════════════════════ */
+.toolbar {
+  position: sticky;
+  top: 64px;
+  z-index: 899;
+  padding: 0.9rem 4%;
+  background: var(--bg-nav);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  transition: background 0.4s;
+}
+
+/* Filter toggle (mobile) */
+.filter-toggle {
+  display: none;
+  align-items: center;
+  gap: 0.4rem;
+  background: transparent;
+  border: 1px solid var(--rule);
+  color: var(--gold);
+  font-family: var(--sans);
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.5rem 0.85rem;
+  cursor: pointer;
+  transition: background 0.3s, border-color 0.3s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.filter-toggle:hover { background: var(--bg-glass); }
+[data-theme="light"] .filter-toggle { color: var(--ink-2); }
+
+/* Search */
+.search-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 150px;
+  max-width: 300px;
+}
+.search-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.72rem;
+  opacity: 0.35;
+  pointer-events: none;
+}
+.search-input {
+  width: 100%;
+  background: var(--bg-glass);
+  border: 1px solid var(--rule);
+  border-bottom-color: var(--rule-h);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  font-weight: 300;
+  padding: 0.55rem 0.9rem 0.55rem 2.2rem;
+  outline: none;
+  transition: border-color 0.3s cubic-bezier(0.25,1,0.5,1);
+  -webkit-appearance: none;
+}
+.search-input:focus { border-color: var(--gold); }
+.search-input::placeholder { color: var(--ink-mute); }
+[data-theme="light"] .search-input:focus { border-color: var(--gold); background: rgba(201,168,76,0.03); }
+
+/* Sort */
+.sort-select {
+  background: var(--bg-glass);
+  border: 1px solid var(--rule);
+  border-bottom-color: var(--rule-h);
+  color: var(--ink-2);
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  padding: 0.55rem 0.85rem;
+  outline: none;
+  cursor: pointer;
+  min-width: 148px;
+  -webkit-appearance: none;
+  transition: border-color 0.3s;
+}
+.sort-select:focus { border-color: var(--gold); }
+.sort-select option { background: var(--bg-raise); color: var(--ink); }
+
+/* Result count label */
+.result-label {
+  font-size: 0.68rem;
+  color: var(--ink-3);
+  letter-spacing: 0.06em;
+  margin-left: auto;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   PAGE LAYOUT — SIDEBAR + PRODUCTS
+══════════════════════════════════════════════════════════════ */
+.layout {
+  display: flex;
+  min-height: 70vh;
+  align-items: flex-start;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: 252px;
+  flex-shrink: 0;
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--rule);
+  padding: 2rem 1.5rem;
+  position: sticky;
+  top: 113px; /* nav + toolbar */
+  height: calc(100vh - 113px);
+  overflow-y: auto;
+  transition:
+    background 0.4s,
+    transform 0.45s cubic-bezier(0.76,0,0.24,1);
+}
+.sidebar::-webkit-scrollbar { width: 2px; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--rule-h); }
+
+/* Sidebar section group */
+.sb-group {
+  margin-bottom: 2.2rem;
+}
+.sb-group-label {
+  font-family: var(--sans);
+  font-size: 0.58rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1rem;
+  padding-bottom: 0.55rem;
+  border-bottom: 1px solid var(--rule);
+}
+[data-theme="light"] .sb-group-label { color: #000; border-bottom-color: rgba(0,0,0,0.09); }
+
+/* Category buttons */
+.cat-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 0.6rem;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--ink-2);
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  font-weight: 300;
+  cursor: pointer;
+  text-align: left;
+  margin-bottom: 2px;
+  transition:
+    background 0.25s cubic-bezier(0.25,1,0.5,1),
+    border-color 0.25s,
+    color 0.25s;
+}
+.cat-btn:hover,
+.cat-btn.active {
+  background: var(--bg-glass);
+  border-color: var(--rule);
+  color: var(--ink);
+}
+.cat-btn.active .cat-name { color: var(--gold); }
+[data-theme="light"] .cat-btn.active .cat-name { color: var(--gold-deep); font-weight: 500; }
+
+.cat-icon  { font-size: 0.85rem; flex-shrink: 0; }
+.cat-name  { flex: 1; }
+.cat-count {
+  font-size: 0.6rem;
+  color: var(--ink-3);
+  background: var(--bg-glass);
+  border: 1px solid var(--rule);
+  padding: 0.08rem 0.38rem;
+  letter-spacing: 0.04em;
+}
+
+/* Price inputs */
+.price-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin-bottom: 0.7rem;
+}
+.price-input {
+  background: var(--bg-glass);
+  border: 1px solid var(--rule);
+  border-bottom-color: var(--rule-h);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  padding: 0.45rem 0.5rem;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.25s;
+  -webkit-appearance: none;
+}
+.price-input:focus { border-color: var(--gold); }
+.price-input::placeholder { color: var(--ink-mute); }
+[data-theme="light"] .price-input:focus { border-color: var(--gold); }
+
+/* Rating options */
+.rating-opts {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.rating-opt {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--ink-2);
+  cursor: pointer;
+  padding: 0.22rem 0;
+  transition: color 0.2s;
+}
+.rating-opt:hover { color: var(--gold); }
+.rating-opt input { accent-color: var(--gold); cursor: pointer; }
+[data-theme="light"] .rating-opt:hover { color: var(--gold); }
+
+/* Clear filters */
+.clear-btn {
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--rule);
+  color: var(--ink-3);
+  font-family: var(--sans);
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 0.48rem;
+  cursor: pointer;
+  margin-top: 0.4rem;
+  transition: border-color 0.3s, color 0.3s;
+}
+.clear-btn:hover { border-color: var(--gold); color: var(--gold); }
+[data-theme="light"] .clear-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+/* ── PRODUCTS AREA ── */
+.products-area {
+  flex: 1;
+  padding: 1.8rem;
+  min-width: 0;
+}
+
+/* Product grid — auto-fill, editorial spacing */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(205px, 1fr));
+  gap: 1px;
+  background: var(--rule);
+  margin-bottom: 2.5rem;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   PRODUCT CARD
+   Each card is a gallery pedestal — deliberate, precious, quiet.
+══════════════════════════════════════════════════════════════ */
+.pc {
+  position: relative;
+  background: var(--bg-card);
+  overflow: hidden;
+  transition:
+    background 0.45s cubic-bezier(0.25,1,0.5,1),
+    box-shadow 0.45s cubic-bezier(0.25,1,0.5,1);
+  display: flex;
+  flex-direction: column;
+}
+.pc:hover {
+  background: var(--bg-card-h);
+  box-shadow: var(--shade-hover);
+  z-index: 2;
+}
+
+/* Badge */
+.pc-badge {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 3;
+  background: var(--gold);
+  color: #000;
+  font-family: var(--sans);
+  font-size: 0.52rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.55rem;
+}
+[data-theme="light"] .pc-badge { background: #000; color: #fff; }
+
+/* Wishlist button */
+.pc-wish {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 3;
+  width: 28px;
+  height: 28px;
+  background: var(--bg);
+  border: 1px solid var(--rule);
+  color: var(--ink-3);
+  font-size: 0.78rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition:
+    opacity 0.3s cubic-bezier(0.25,1,0.5,1),
+    border-color 0.3s,
+    color 0.3s;
+}
+.pc:hover .pc-wish,
+.pc-wish.liked { opacity: 1; }
+.pc-wish.liked { color: #e05555; border-color: #e05555; }
+
+/* Product image area — abstract, geometric */
+.pc-img {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  background: var(--bg-img);
+}
+
+/* Ambient glow on hover */
+.pc-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, var(--gold-glow), transparent 65%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s cubic-bezier(0.25,1,0.5,1);
+}
+.pc:hover .pc-glow { opacity: 1; }
+
+/* The emoji icon — treated as a sculpture */
+.pc-icon {
+  font-size: 2.8rem;
+  opacity: 0.18;
+  transition:
+    opacity 0.5s cubic-bezier(0.25,1,0.5,1),
+    transform 0.6s cubic-bezier(0.25,1,0.5,1);
+  position: relative;
+  z-index: 1;
+}
+.pc:hover .pc-icon { opacity: 0.28; transform: scale(1.08) rotate(2deg); }
+[data-theme="light"] .pc-icon { opacity: 0.3; }
+[data-theme="light"] .pc:hover .pc-icon { opacity: 0.45; }
+
+/* Quick view overlay */
+.pc-overlay {
+  position: absolute;
+  inset: 0;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.35s cubic-bezier(0.25,1,0.5,1);
+  z-index: 2;
+}
+.pc:hover .pc-overlay { background: rgba(0,0,0,0.25); }
+[data-theme="light"] .pc:hover .pc-overlay { background: rgba(255,255,255,0.2); }
+
+.pc-qv {
+  opacity: 0;
+  background: var(--gold);
+  color: #000;
+  font-family: var(--sans);
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 0.45rem 1rem;
+  border: none;
+  cursor: pointer;
+  transition:
+    opacity 0.3s cubic-bezier(0.25,1,0.5,1),
+    transform 0.3s cubic-bezier(0.25,1,0.5,1);
+  transform: translateY(4px);
+}
+.pc:hover .pc-qv { opacity: 1; transform: none; }
+[data-theme="light"] .pc-qv { background: #000; color: #fff; }
+
+/* Card info block */
+.pc-info {
+  padding: 1.1rem 1rem 1rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.pc-cat {
+  font-family: var(--sans);
+  font-size: 0.55rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.28rem;
+  opacity: 0.8;
+}
+[data-theme="light"] .pc-cat { color: var(--gold-deep); opacity: 0.65; }
+
+.pc-name {
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  font-weight: 400;
+  color: var(--ink);
+  line-height: 1.25;
+  margin-bottom: 0.28rem;
+  flex: 1;
+}
+.pc-price {
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--gold);
+  margin-bottom: 0.4rem;
+  letter-spacing: 0.02em;
+}
+.pc-price s {
+  color: var(--ink-3);
+  font-size: 0.7rem;
+  font-weight: 300;
+  margin-left: 0.3rem;
+}
+
+.pc-stars {
+  font-size: 0.72rem;
+  color: var(--gold);
+  margin-bottom: 0.9rem;
+  letter-spacing: 0.06em;
+}
+.pc-stars span { color: var(--ink-3); font-size: 0.6rem; margin-left: 0.18rem; }
+
+/* Card CTA buttons */
+.pc-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.38rem;
+  margin-top: auto;
+}
+
+.btn-wa-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  background: linear-gradient(135deg, var(--wa1), var(--wa2));
+  color: #fff;
+  font-family: var(--sans);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.5rem;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: filter 0.3s, box-shadow 0.3s;
+}
+.btn-wa-card:hover { filter: brightness(1.08); box-shadow: 0 0 14px rgba(37,211,102,0.28); }
+
+.btn-cart-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  background: transparent;
+  border: 1px solid var(--rule);
+  border-bottom-color: var(--rule-h);
+  color: var(--gold);
+  font-family: var(--sans);
+  font-size: 0.58rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.42rem;
+  cursor: pointer;
+  transition:
+    background 0.3s,
+    border-color 0.3s,
+    color 0.3s;
+}
+.btn-cart-card:hover { background: var(--bg-glass); border-color: var(--gold); }
+.btn-cart-card.added { border-color: #2ecc71; color: #2ecc71; }
+[data-theme="light"] .btn-cart-card { color: var(--gold-deep); border-color: var(--rule); }
+[data-theme="light"] .btn-cart-card:hover { border-color: var(--gold); color: var(--gold); }
+
+/* ══════════════════════════════════════════════════════════════
+   EMPTY STATE
+══════════════════════════════════════════════════════════════ */
+.empty-state {
+  grid-column: 1/-1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6rem 2rem;
+  text-align: center;
+  background: var(--bg-card);
+}
+.empty-icon {
+  font-size: 3rem;
+  opacity: 0.15;
+  margin-bottom: 1.5rem;
+  display: block;
+}
+.empty-state h3 {
+  font-family: var(--serif);
+  font-size: 1.6rem;
+  font-weight: 300;
+  color: var(--ink);
+  margin-bottom: 0.5rem;
+}
+.empty-state p {
+  font-size: 0.9rem;
+  color: var(--ink-3);
+  margin-bottom: 2rem;
+  max-width: 280px;
+  line-height: 1.8;
+}
+.btn-clear-empty {
+  background: var(--gold);
+  color: #000;
+  border: none;
+  font-family: var(--sans);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 0.7rem 1.8rem;
+  cursor: pointer;
+  clip-path: polygon(7px 0,100% 0,100% calc(100% - 7px),calc(100% - 7px) 100%,0 100%,0 7px);
+  transition: opacity 0.3s;
+}
+.btn-clear-empty:hover { opacity: 0.85; }
+[data-theme="light"] .btn-clear-empty { background: #000; color: #fff; }
+
+/* ══════════════════════════════════════════════════════════════
+   PAGINATION
+══════════════════════════════════════════════════════════════ */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 1rem 0 2rem;
+}
+.pg-btn {
+  width: 34px;
+  height: 34px;
+  background: transparent;
+  border: 1px solid var(--rule);
+  color: var(--ink-2);
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.3s, color 0.3s, background 0.3s;
+}
+.pg-btn:hover { border-color: var(--rule-h); color: var(--gold); }
+.pg-btn.active { background: var(--gold); border-color: var(--gold); color: #000; font-weight: 600; }
+[data-theme="light"] .pg-btn.active { background: #000; border-color: #000; color: #fff; }
+[data-theme="light"] .pg-btn:hover { color: var(--gold); border-color: var(--gold); }
+.pg-ellipsis { font-size: 0.72rem; color: var(--ink-3); padding: 0 0.25rem; }
+
+/* ══════════════════════════════════════════════════════════════
+   QUICK VIEW MODAL
+══════════════════════════════════════════════════════════════ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.92);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s cubic-bezier(0.25,1,0.5,1);
+}
+.modal-overlay.open { opacity: 1; pointer-events: auto; }
+
+.modal-box {
+  background: var(--bg-modal);
+  border: 1px solid var(--rule-h);
+  width: 92%;
+  max-width: 740px;
+  max-height: 92vh;
+  overflow-y: auto;
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  transform: translateY(28px) scale(0.97);
+  transition: transform 0.55s cubic-bezier(0.25,1,0.5,1);
+  box-shadow: var(--shade-modal);
+}
+.modal-overlay.open .modal-box { transform: none; }
+
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: transparent;
+  border: 1px solid var(--rule);
+  color: var(--ink-3);
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  transition: border-color 0.3s, color 0.3s;
+}
+.modal-close:hover { border-color: var(--gold); color: var(--gold); }
+[data-theme="light"] .modal-close:hover { border-color: var(--gold); color: var(--gold); }
+
+/* Modal product image */
+.modal-img {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 5.5rem;
+  background: var(--bg-img);
+  aspect-ratio: 1;
+  position: relative;
+  overflow: hidden;
+}
+.modal-img::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, var(--gold-glow), transparent 65%);
+}
+
+/* Modal details */
+.modal-details {
+  padding: 2.2rem 2rem;
+}
+.modal-cat {
+  font-family: var(--sans);
+  font-size: 0.55rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.5rem;
+}
+[data-theme="light"] .modal-cat { color: var(--gold-deep); opacity: 0.65; }
+
+.modal-name {
+  font-family: var(--serif);
+  font-size: 1.8rem;
+  font-weight: 300;
+  color: var(--ink);
+  line-height: 1.12;
+  margin-bottom: 0.4rem;
+}
+.modal-price {
+  font-family: var(--sans);
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: var(--gold);
+  margin-bottom: 0.3rem;
+}
+.modal-price s { color: var(--ink-3); font-size: 0.88rem; font-weight: 300; margin-left: 0.35rem; }
+.modal-stars { font-size: 0.78rem; color: var(--gold); margin-bottom: 1rem; }
+.modal-rule { width: 32px; height: 1px; background: linear-gradient(90deg, var(--gold), transparent); margin-bottom: 1rem; }
+[data-theme="light"] .modal-rule { background: linear-gradient(90deg,#000,transparent); }
+
+.modal-desc {
+  font-size: 0.9rem;
+  color: var(--ink-2);
+  line-height: 1.88;
+  margin-bottom: 1.6rem;
+}
+.modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+.modal-wa {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  background: linear-gradient(135deg, var(--wa1), var(--wa2));
+  color: #fff;
+  font-family: var(--sans);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.75rem;
+  text-decoration: none;
+  clip-path: polygon(7px 0,100% 0,100% calc(100% - 7px),calc(100% - 7px) 100%,0 100%,0 7px);
+  transition: box-shadow 0.3s;
+}
+.modal-wa:hover { box-shadow: 0 0 22px rgba(37,211,102,0.32); }
+
+.modal-details-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  background: transparent;
+  border: 1px solid var(--rule);
+  color: var(--ink-2);
+  font-family: var(--sans);
+  font-size: 0.62rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.62rem;
+  text-decoration: none;
+  transition: border-color 0.3s, color 0.3s;
+}
+.modal-details-btn:hover { border-color: var(--rule-h); color: var(--ink); }
+
+.modal-cart-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  background: transparent;
+  border: 1px solid var(--rule);
+  color: var(--ink-3);
+  font-family: var(--sans);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.55rem;
+  cursor: pointer;
+  transition: border-color 0.3s, color 0.3s;
+}
+.modal-cart-btn:hover { border-color: var(--rule-h); color: var(--ink); }
+
+/* ══════════════════════════════════════════════════════════════
+   SLIDE-OUT PANELS (Cart + Wishlist)
+══════════════════════════════════════════════════════════════ */
+.panel-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  backdrop-filter: blur(6px);
+  z-index: 1799;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s cubic-bezier(0.25,1,0.5,1);
+}
+.panel-overlay.show { opacity: 1; pointer-events: auto; }
+
+.cart-panel,
+.wish-panel {
+  position: fixed;
+  top: 0;
+  height: 100vh;
+  background: var(--bg-panel);
+  z-index: 1800;
+  display: flex;
+  flex-direction: column;
+  transition:
+    right 0.5s cubic-bezier(0.76,0,0.24,1),
+    background 0.4s;
+}
+.cart-panel { right: -370px; width: 350px; border-left: 1px solid var(--rule); }
+.wish-panel { right: -320px; width: 300px; border-left: 1px solid var(--rule); }
+.cart-panel.open { right: 0; }
+.wish-panel.open { right: 0; }
+
+.panel-head {
+  padding: 1.4rem;
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.panel-head h3 {
+  font-family: var(--serif);
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: var(--ink);
+}
+.panel-close-btn {
+  background: transparent;
+  border: 1px solid var(--rule);
+  color: var(--ink-2);
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.82rem;
+  transition: border-color 0.3s, color 0.3s;
+}
+.panel-close-btn:hover { border-color: var(--gold); color: var(--gold); }
+[data-theme="light"] .panel-close-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+.panel-body { flex: 1; overflow-y: auto; padding: 1.3rem; }
+.panel-body::-webkit-scrollbar { width: 2px; }
+.panel-body::-webkit-scrollbar-thumb { background: var(--rule-h); }
+
+.panel-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+}
+.panel-empty-icon {
+  font-size: 2.8rem;
+  opacity: 0.12;
+  margin-bottom: 1rem;
+  display: block;
+}
+.panel-empty p {
+  font-size: 0.88rem;
+  color: var(--ink-3);
+  line-height: 1.75;
+  max-width: 200px;
+}
+
+/* Cart / wish items */
+.cart-item,
+.wish-item {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--rule);
+}
+.item-icon-wrap {
+  width: 40px;
+  height: 40px;
+  background: var(--bg-glass);
+  border: 1px solid var(--rule);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+.item-info { flex: 1; min-width: 0; }
+.item-name {
+  font-family: var(--serif);
+  font-size: 0.82rem;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.item-price {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  color: var(--gold);
+  margin-top: 0.1rem;
+}
+[data-theme="light"] .item-price { color: var(--gold-deep); }
+
+.item-qty {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.35rem;
+}
+.qty-btn {
+  width: 20px;
+  height: 20px;
+  background: var(--bg-glass);
+  border: 1px solid var(--rule);
+  color: var(--gold);
+  cursor: pointer;
+  font-size: 0.78rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.25s;
+}
+.qty-btn:hover { background: var(--gold-trace); }
+[data-theme="light"] .qty-btn { color: var(--ink-2); }
+
+.qty-val {
+  font-size: 0.75rem;
+  color: var(--ink);
+  min-width: 18px;
+  text-align: center;
+}
+.item-remove {
+  background: transparent;
+  border: none;
+  color: var(--ink-3);
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 4px;
+  flex-shrink: 0;
+  transition: color 0.25s;
+}
+.item-remove:hover { color: #e05555; }
+
+/* Cart footer */
+.cart-footer {
+  padding: 1.3rem;
+  border-top: 1px solid var(--rule);
+}
+.cart-total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.1rem;
+}
+.cart-total-row span {
+  font-family: var(--sans);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+.cart-total-row strong {
+  font-family: var(--serif);
+  font-size: 1.2rem;
+  color: var(--gold);
+}
+[data-theme="light"] .cart-total-row strong { color: var(--gold-deep); }
+
+.cart-checkout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, var(--wa1), var(--wa2));
+  color: #fff;
+  font-family: var(--sans);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.75rem;
+  width: 100%;
+  text-decoration: none;
+  clip-path: polygon(7px 0,100% 0,100% calc(100% - 7px),calc(100% - 7px) 100%,0 100%,0 7px);
+  transition: box-shadow 0.3s;
+}
+.cart-checkout-btn:hover { box-shadow: 0 0 20px rgba(37,211,102,0.3); }
+
+/* ══════════════════════════════════════════════════════════════
+   FLOATING WHATSAPP
+══════════════════════════════════════════════════════════════ */
+.float-wa {
+  position: fixed;
+  bottom: 2.2rem;
+  right: 2.2rem;
+  z-index: 990;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+.float-wa-tip {
+  background: var(--bg-raise);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  padding: 0.28rem 0.7rem;
+  border: 1px solid var(--rule);
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateX(8px);
+  pointer-events: none;
+  transition:
+    opacity 0.3s cubic-bezier(0.25,1,0.5,1),
+    transform 0.3s cubic-bezier(0.25,1,0.5,1);
+}
+.float-wa:hover .float-wa-tip { opacity: 1; transform: none; }
+.float-wa-btn {
+  background: linear-gradient(135deg, var(--wa1), var(--wa2));
+  color: #fff;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+  text-decoration: none;
+  box-shadow: 0 4px 18px rgba(37,211,102,0.4);
+  transition: transform 0.4s cubic-bezier(0.25,1,0.5,1), box-shadow 0.4s;
+  animation: waPulse 3s ease-in-out infinite;
+}
+.float-wa-btn:hover { transform: scale(1.1); box-shadow: 0 8px 30px rgba(37,211,102,0.5); }
+@keyframes waPulse {
+  0%,100% { box-shadow: 0 4px 18px rgba(37,211,102,0.4); }
+  50%      { box-shadow: 0 4px 30px rgba(37,211,102,0.65); }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TOAST NOTIFICATION
+══════════════════════════════════════════════════════════════ */
+.toast {
+  position: fixed;
+  bottom: 5.5rem;
+  right: 2.2rem;
+  background: var(--gold);
+  color: #000;
+  font-family: var(--sans);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.65rem 1.2rem;
+  z-index: 9999;
+  pointer-events: none;
+  transform: translateY(110px);
+  opacity: 0;
+  clip-path: polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);
+  transition:
+    transform 0.45s cubic-bezier(0.25,1,0.5,1),
+    opacity 0.45s cubic-bezier(0.25,1,0.5,1);
+  max-width: 260px;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+[data-theme="light"] .toast { background: #000; color: #fff; }
+
+/* ══════════════════════════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .filter-toggle { display: flex; }
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -280px;
+    height: 100vh;
+    width: 260px;
+    z-index: 1700;
+    padding-top: 1.5rem;
+    transition: left 0.45s cubic-bezier(0.76,0,0.24,1), background 0.4s;
+    top: 0;
+  }
+  .sidebar.open { left: 0; }
+}
+
+@media (max-width: 640px) {
+  .modal-box { grid-template-columns: 1fr; max-width: 400px; }
+  .modal-img { aspect-ratio: auto; min-height: 200px; }
+  .nav-right .wa-nav { display: none; }
+  .products-area { padding: 1rem; }
+  .product-grid { grid-template-columns: repeat(auto-fill, minmax(160px,1fr)); }
+}
+
+@media (max-width: 400px) {
+  .product-grid { grid-template-columns: 1fr 1fr; }
+}
 </style>
 </head>
+
 <body>
-
-<!-- PANELS -->
-<div class="panel-overlay" id="panelOv" onclick="closePanels()"></div>
-
-<!-- CART PANEL -->
-<div class="cart-panel" id="cartPanel">
-  <div class="panel-header">
-    <h3>Your Cart</h3>
-    <button class="panel-close" onclick="closeCart()">&#x2715;</button>
-  </div>
-  <div class="panel-body" id="cartBody"></div>
-  <div class="cart-footer" id="cartFooter" style="display:none">
-    <div class="cart-total"><span>Total</span><strong id="cartTotal">&#8358; 0</strong></div>
-    <a id="cartWaBtn" href="#" target="_blank" class="cart-wa-btn">&#x1F4AC; Order All via WhatsApp</a>
-  </div>
+<!-- ── LIGHT MODE AMBIENT ORBS — warm champagne gold atmosphere ── -->
+<div class="light-orbs" aria-hidden="true">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
 </div>
 
-<!-- WISHLIST PANEL -->
-<div class="wish-panel" id="wishPanel">
-  <div class="panel-header">
-    <h3>Wishlist</h3>
-    <button class="panel-close" onclick="closeWish()">&#x2715;</button>
-  </div>
-  <div class="panel-body" id="wishBody"></div>
-</div>
-
-<!-- NAV -->
-<nav>
-  <div class="nav-l">
-    <a href="index.html" class="nav-logo">
-      <img src="data:image/png;base64,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" alt="EEC"/>
-      <span>Enny's Elegance &amp; Co</span>
+<!-- ══════════════════════════════════════════
+     NAVIGATION
+══════════════════════════════════════════ -->
+<nav id="nav" role="navigation" aria-label="Store navigation">
+  <div class="nav-left">
+    <a href="#" class="nav-logo" aria-label="Enny's Elegance & Co">
+      <div class="nav-logo-mark no-image" aria-hidden="true" id="navLogoMark">
+        <!-- <img src="eec-logo.png" alt="" class="nav-logo-mark-img"> -->
+        <span class="nav-logo-mark-inner">E</span>
+      </div>
+      <span class="nav-logo-text">Enny's Elegance &amp; Co</span>
     </a>
-    <a href="index.html" class="back-lnk">&#8592; <span>Brand Site</span></a>
+    <a href="index_v3.html" class="back-link">
+      <span aria-hidden="true">←</span>
+      <span>Brand Site</span>
+    </a>
   </div>
-  <div class="nav-r">
-    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">&#x2600; Light Mode</button>
-    <a href="https://wa.me/2349061538784?text=Hello%2C%20I%27d%20like%20to%20shop%20from%20Enny%27s%20Elegance%20%26%20Co" target="_blank" class="wa-nav">&#x1F4AC; Order via WhatsApp</a>
-    <button class="cart-pill" onclick="openCart()">&#x1F6D2; Cart <span class="cart-badge" id="cartBadge">0</span></button>
+
+  <div class="nav-right">
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle colour theme">
+      <span id="togIcon" aria-hidden="true">🌑</span>
+      <span id="togLabel">Dark</span>
+    </button>
+    <a href="https://wa.me/2347073826150?text=Hello%2C%20I'd%20like%20to%20shop%20from%20Enny's%20Elegance%20%26%20Co"
+       target="_blank" rel="noopener"
+       class="wa-nav"
+       aria-label="Order via WhatsApp">
+      💬 Order via WhatsApp
+    </a>
+    <button class="cart-pill" onclick="openCart()" aria-label="Open cart">
+      🛒 Cart
+      <span class="cart-badge" id="cartBadge" aria-live="polite">0</span>
+    </button>
   </div>
 </nav>
 
-<!-- BANNER -->
-<div class="store-banner">
-  <div class="sb-eye">Luxury Collection 2024</div>
+<!-- ══════════════════════════════════════════
+     STORE BANNER
+══════════════════════════════════════════ -->
+<header class="store-banner">
+  <div class="sb-eyebrow" aria-hidden="true">Luxury Collection — 2025</div>
   <h1>Our <em>Curated</em> Store</h1>
-  <p>Browse premium jewelry, watches, perfumes, eyewear, bags and fashion accessories &mdash; each piece chosen for elegance.</p>
+  <p>Browse premium jewelry, watches, perfumes, eyewear, bags and fashion accessories — each piece chosen for elegance.</p>
+</header>
+
+<!-- ══════════════════════════════════════════
+     TRUST BAR
+══════════════════════════════════════════ -->
+<div class="trust-bar" role="list" aria-label="Trust signals">
+  <div class="trust-item" role="listitem"><div class="trust-check" aria-hidden="true">✓</div> Authentic Quality</div>
+  <div class="trust-item" role="listitem"><div class="trust-check" aria-hidden="true">✓</div> Nationwide Delivery</div>
+  <div class="trust-item" role="listitem"><div class="trust-check" aria-hidden="true">✓</div> Fast WhatsApp Response</div>
+  <div class="trust-item" role="listitem"><div class="trust-check" aria-hidden="true">✓</div> Secure Transactions</div>
+  <div class="trust-item" role="listitem"><div class="trust-check" aria-hidden="true">✓</div> Customer Satisfaction</div>
 </div>
 
-<!-- TRUST BAR -->
-<div class="store-trust">
-  <div class="st-item"><span class="st-check">&#10003;</span> Authentic Quality</div>
-  <div class="st-item"><span class="st-check">&#10003;</span> Nationwide Delivery</div>
-  <div class="st-item"><span class="st-check">&#10003;</span> Fast WhatsApp Response</div>
-  <div class="st-item"><span class="st-check">&#10003;</span> Secure Transactions</div>
-  <div class="st-item"><span class="st-check">&#10003;</span> Customer Satisfaction</div>
-</div>
-
-<!-- TOOLBAR -->
-<div class="toolbar">
-  <button class="filter-toggle" onclick="toggleSidebar()">&#9776; Filter</button>
+<!-- ══════════════════════════════════════════
+     TOOLBAR
+══════════════════════════════════════════ -->
+<div class="toolbar" role="search" aria-label="Product filter toolbar">
+  <button class="filter-toggle" onclick="toggleSidebar()" aria-expanded="false" aria-controls="sidebar" id="filterBtn">
+    ☰ Filter
+  </button>
   <div class="search-wrap">
-    <span class="search-icon">&#x1F50D;</span>
-    <input type="text" id="searchInput" placeholder="Search products..." oninput="applyFilters()"/>
+    <span class="search-icon" aria-hidden="true">🔍</span>
+    <input
+      class="search-input"
+      id="searchInput"
+      type="search"
+      placeholder="Search products…"
+      oninput="applyFilters()"
+      aria-label="Search products"
+    />
   </div>
-  <select class="sort-sel" id="sortSel" onchange="applyFilters()">
+  <select class="sort-select" id="sortSelect" onchange="applyFilters()" aria-label="Sort products">
     <option value="">Featured</option>
-    <option value="price-asc">Price: Low &rarr; High</option>
-    <option value="price-desc">Price: High &rarr; Low</option>
-    <option value="name">Name A&ndash;Z</option>
+    <option value="price-asc">Price: Low → High</option>
+    <option value="price-desc">Price: High → Low</option>
+    <option value="name">Name A–Z</option>
     <option value="rating">Top Rated</option>
   </select>
-  <span class="result-label" id="resultLabel">24 products</span>
+  <span class="result-label" id="resultLabel" aria-live="polite">24 products</span>
 </div>
 
-<!-- LAYOUT -->
+<!-- ══════════════════════════════════════════
+     LAYOUT — SIDEBAR + PRODUCTS
+══════════════════════════════════════════ -->
 <div class="layout">
-  <!-- SIDEBAR -->
-  <aside class="sidebar" id="sidebar">
-    <div class="sb-sec">
-      <h4>Category</h4>
-      <button class="cat-btn active" onclick="setCat('all',this)"><span class="cicon">&#x2728;</span><span class="cname">All Products</span><span class="cct">24</span></button>
-      <button class="cat-btn" onclick="setCat('Jewelry',this)"><span class="cicon">&#x1F48E;</span><span class="cname">Jewelry</span><span class="cct">4</span></button>
-      <button class="cat-btn" onclick="setCat('Watches',this)"><span class="cicon">&#x231A;</span><span class="cname">Luxury Watches</span><span class="cct">4</span></button>
-      <button class="cat-btn" onclick="setCat('Perfumes',this)"><span class="cicon">&#x1F338;</span><span class="cname">Perfumes</span><span class="cct">4</span></button>
-      <button class="cat-btn" onclick="setCat('Eyewear',this)"><span class="cicon">&#x1F576;&#xFE0F;</span><span class="cname">Eyewear</span><span class="cct">4</span></button>
-      <button class="cat-btn" onclick="setCat('Bags',this)"><span class="cicon">&#x1F45C;</span><span class="cname">Bags</span><span class="cct">4</span></button>
-      <button class="cat-btn" onclick="setCat('Accessories',this)"><span class="cicon">&#x1F380;</span><span class="cname">Fashion Accessories</span><span class="cct">4</span></button>
+
+  <!-- SIDEBAR FILTERS -->
+  <aside class="sidebar" id="sidebar" role="complementary" aria-label="Product filters">
+
+    <div class="sb-group">
+      <div class="sb-group-label">Category</div>
+      <button class="cat-btn active" onclick="setCat('all',this)">
+        <span class="cat-icon" aria-hidden="true">✨</span>
+        <span class="cat-name">All Products</span>
+        <span class="cat-count">24</span>
+      </button>
+      <button class="cat-btn" onclick="setCat('Jewelry',this)">
+        <span class="cat-icon" aria-hidden="true">💎</span>
+        <span class="cat-name">Jewelry</span>
+        <span class="cat-count">4</span>
+      </button>
+      <button class="cat-btn" onclick="setCat('Watches',this)">
+        <span class="cat-icon" aria-hidden="true">⌚</span>
+        <span class="cat-name">Luxury Watches</span>
+        <span class="cat-count">4</span>
+      </button>
+      <button class="cat-btn" onclick="setCat('Perfumes',this)">
+        <span class="cat-icon" aria-hidden="true">🌸</span>
+        <span class="cat-name">Perfumes</span>
+        <span class="cat-count">4</span>
+      </button>
+      <button class="cat-btn" onclick="setCat('Eyewear',this)">
+        <span class="cat-icon" aria-hidden="true">🕶️</span>
+        <span class="cat-name">Eyewear</span>
+        <span class="cat-count">4</span>
+      </button>
+      <button class="cat-btn" onclick="setCat('Bags',this)">
+        <span class="cat-icon" aria-hidden="true">👜</span>
+        <span class="cat-name">Bags</span>
+        <span class="cat-count">4</span>
+      </button>
+      <button class="cat-btn" onclick="setCat('Accessories',this)">
+        <span class="cat-icon" aria-hidden="true">🎀</span>
+        <span class="cat-name">Accessories</span>
+        <span class="cat-count">4</span>
+      </button>
     </div>
-    <div class="sb-sec">
-      <h4>Price Range (&#8358;)</h4>
+
+    <div class="sb-group">
+      <div class="sb-group-label">Price Range (₦)</div>
       <div class="price-row">
-        <input type="number" id="pMin" placeholder="Min" oninput="applyFilters()"/>
-        <input type="number" id="pMax" placeholder="Max" oninput="applyFilters()"/>
+        <input class="price-input" id="pMin" type="number" placeholder="Min" oninput="applyFilters()" aria-label="Minimum price"/>
+        <input class="price-input" id="pMax" type="number" placeholder="Max" oninput="applyFilters()" aria-label="Maximum price"/>
       </div>
     </div>
-    <div class="sb-sec">
-      <h4>Rating</h4>
-      <div class="rat-opts">
-        <label class="r-opt"><input type="radio" name="rat" value="" onchange="applyFilters()" checked> All Ratings</label>
-        <label class="r-opt"><input type="radio" name="rat" value="5" onchange="applyFilters()"> &#9733;&#9733;&#9733;&#9733;&#9733; 5 Stars</label>
-        <label class="r-opt"><input type="radio" name="rat" value="4" onchange="applyFilters()"> &#9733;&#9733;&#9733;&#9733;&#9734; 4+ Stars</label>
+
+    <div class="sb-group">
+      <div class="sb-group-label">Rating</div>
+      <div class="rating-opts" role="radiogroup" aria-label="Minimum rating">
+        <label class="rating-opt">
+          <input type="radio" name="rat" value="" onchange="applyFilters()" checked/> All Ratings
+        </label>
+        <label class="rating-opt">
+          <input type="radio" name="rat" value="5" onchange="applyFilters()"/> ★★★★★ 5 Stars
+        </label>
+        <label class="rating-opt">
+          <input type="radio" name="rat" value="4" onchange="applyFilters()"/> ★★★★☆ 4+ Stars
+        </label>
       </div>
     </div>
-    <button class="clear-all" onclick="clearFilters()">&#x2715; Clear All Filters</button>
+
+    <button class="clear-btn" onclick="clearFilters()">✕ Clear All Filters</button>
   </aside>
 
   <!-- PRODUCTS -->
-  <main class="products-area">
-    <div class="p-grid" id="pGrid"></div>
-    <div class="pagination" id="pagination"></div>
+  <main class="products-area" role="main" aria-label="Product listings">
+    <div class="product-grid" id="productGrid"></div>
+    <nav class="pagination" id="pagination" aria-label="Product pages"></nav>
   </main>
 </div>
 
-<!-- MODAL -->
-<div class="modal-ov" id="modal" onclick="closeModalOv(event)">
+<!-- ══════════════════════════════════════════
+     QUICK VIEW MODAL
+══════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalName" onclick="closeModalOv(event)">
   <div class="modal-box">
-    <button class="modal-close" onclick="closeModal()">&#x2715;</button>
-    <div class="modal-body">
-      <div class="modal-left" id="mIcon"></div>
-      <div class="modal-r">
-        <div class="m-cat" id="mCat"></div>
-        <div class="m-name" id="mName"></div>
-        <div class="m-price" id="mPrice"></div>
-        <div class="m-stars" id="mStars"></div>
-        <div class="m-div"></div>
-        <div class="m-desc" id="mDesc"></div>
-        <div class="m-actions">
-          <a id="mWaBtn" href="#" target="_blank" class="m-wa">&#x1F4AC; Order On WhatsApp</a>
-          <a id="mDetailsBtn" href="#" target="_blank" class="m-details">&#x1F4CB; Get Product Details</a>
-          <button class="m-cart" id="mCartBtn" onclick="modalCart()">&#x1F6D2; Add to Cart</button>
-        </div>
+    <button class="modal-close" onclick="closeModal()" aria-label="Close modal">✕</button>
+    <div class="modal-img" id="modalIcon" aria-hidden="true"></div>
+    <div class="modal-details">
+      <div class="modal-cat"  id="modalCat"></div>
+      <div class="modal-name" id="modalName"></div>
+      <div class="modal-price" id="modalPrice"></div>
+      <div class="modal-stars" id="modalStars"></div>
+      <div class="modal-rule" aria-hidden="true"></div>
+      <div class="modal-desc" id="modalDesc"></div>
+      <div class="modal-actions">
+        <a id="modalWaBtn"  href="#" target="_blank" rel="noopener" class="modal-wa">💬 Order On WhatsApp</a>
+        <a id="modalDetailsBtn" href="#" target="_blank" rel="noopener" class="modal-details-btn">📋 Get Product Details</a>
+        <button class="modal-cart-btn" id="modalCartBtn" onclick="modalAddCart()">🛒 Add to Cart</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- FLOAT WA -->
-<div class="float-wa">
-  <div class="float-wa-tip">Order on WhatsApp</div>
-  <a href="https://wa.me/2349061538784?text=Hello%2C%20I%27d%20like%20to%20shop%20at%20Enny%27s%20Elegance%20%26%20Co" target="_blank" class="float-wa-btn" title="WhatsApp">&#x1F4AC;</a>
+<!-- ══════════════════════════════════════════
+     CART PANEL
+══════════════════════════════════════════ -->
+<div class="panel-overlay" id="panelOverlay" onclick="closePanels()"></div>
+
+<aside class="cart-panel" id="cartPanel" role="complementary" aria-label="Shopping cart">
+  <div class="panel-head">
+    <h3>Your Cart</h3>
+    <button class="panel-close-btn" onclick="closeCart()" aria-label="Close cart">✕</button>
+  </div>
+  <div class="panel-body" id="cartBody"></div>
+  <div class="cart-footer" id="cartFooter" style="display:none;">
+    <div class="cart-total-row">
+      <span>Total</span>
+      <strong id="cartTotal">₦0</strong>
+    </div>
+    <a href="#" class="cart-checkout-btn" id="cartCheckoutBtn">💬 Checkout via WhatsApp</a>
+  </div>
+</aside>
+
+<!-- ══════════════════════════════════════════
+     FLOATING WHATSAPP
+══════════════════════════════════════════ -->
+<div class="float-wa" role="complementary" aria-label="WhatsApp quick contact">
+  <div class="float-wa-tip" role="tooltip">Order on WhatsApp</div>
+  <a href="https://wa.me/2347073826150?text=Hello%2C%20I'd%20like%20to%20shop%20from%20Enny's%20Elegance%20%26%20Co"
+     target="_blank" rel="noopener"
+     class="float-wa-btn"
+     aria-label="Contact on WhatsApp">💬</a>
 </div>
 
 <!-- TOAST -->
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="assertive"></div>
 
+
+<!-- ══════════════════════════════════════════
+     VANILLA JAVASCRIPT
+     State-driven, zero dependencies.
+     All logic is pure and readable.
+══════════════════════════════════════════ -->
 <script>
+'use strict';
 
-// ── PRODUCTS ──
-var ALL = [
-  {id:1,name:"Diamond Pendant Necklace",cat:"Jewelry",icon:"💎",price:45000,old:60000,rating:5,rev:124,badge:"Best Seller",desc:"Exquisite diamond pendant crafted in premium gold-plated sterling silver. Hypoallergenic and tarnish-resistant. Perfect for any occasion."},
-  {id:2,name:"Gold Chain Bracelet",cat:"Jewelry",icon:"✨",price:28000,old:0,rating:5,rev:87,badge:"",desc:"Elegant 18K gold-plated chain bracelet. Lightweight and durable, ideal for everyday luxury wear."},
-  {id:3,name:"Pearl Drop Earrings",cat:"Jewelry",icon:"⭕",price:18000,old:24000,rating:4,rev:203,badge:"Sale",desc:"Classic freshwater pearl earrings set in sterling silver. Timeless elegance that suits every woman."},
-  {id:4,name:"Layered Gemstone Set",cat:"Jewelry",icon:"💍",price:55000,old:0,rating:5,rev:56,badge:"New",desc:"Curated layered necklace set with vibrant colored gemstones — a complete statement look in one box."},
-  {id:5,name:"Classic Chronograph",cat:"Watches",icon:"⌚",price:85000,old:110000,rating:5,rev:89,badge:"Best Seller",desc:"Luxury chronograph with sapphire crystal glass and genuine leather strap. Swiss-inspired precision movement."},
-  {id:6,name:"Rose Gold Minimalist",cat:"Watches",icon:"🕐",price:62000,old:0,rating:5,rev:74,badge:"",desc:"Ultra-slim rose gold timepiece with a clean minimalist dial. Built for the modern, elegant professional."},
-  {id:7,name:"Automatic Skeleton Watch",cat:"Watches",icon:"🔮",price:120000,old:150000,rating:5,rev:42,badge:"Premium",desc:"See-through skeleton dial showcasing the automatic movement inside. A true conversation piece on your wrist."},
-  {id:8,name:"Sports Luxury Watch",cat:"Watches",icon:"⏱️",price:78000,old:0,rating:4,rev:61,badge:"",desc:"Water-resistant luxury sports watch with luminous hands, date display and premium stainless steel case."},
-  {id:9,name:"Oud Royale EDP",cat:"Perfumes",icon:"🌸",price:32000,old:42000,rating:5,rev:203,badge:"Best Seller",desc:"Deep and sensual oud fragrance with intoxicating notes of rose, amber and musk. Long-lasting 12+ hours."},
-  {id:10,name:"Fleur de Luxe",cat:"Perfumes",icon:"🌷",price:28000,old:0,rating:5,rev:167,badge:"",desc:"Feminine floral perfume with vibrant top notes of jasmine and gardenia. A signature scent for every day."},
-  {id:11,name:"Black Intense EDP",cat:"Perfumes",icon:"🖤",price:38000,old:48000,rating:5,rev:95,badge:"Limited",desc:"Bold, masculine fragrance with rich woody and smoky notes. Commands respect, exudes presence."},
-  {id:12,name:"Crystal Collection Set",cat:"Perfumes",icon:"💧",price:55000,old:0,rating:4,rev:78,badge:"Gift Set",desc:"A luxurious gift set of three complementary fragrances in a premium glass presentation box."},
-  {id:13,name:"Designer Cat-Eye Frames",cat:"Eyewear",icon:"🕶️",price:28000,old:36000,rating:5,rev:67,badge:"Trending",desc:"Bold cat-eye silhouette with UV400 protection lenses and elegant gold-accented frames."},
-  {id:14,name:"Aviator Gold Edition",cat:"Eyewear",icon:"✈️",price:22000,old:0,rating:5,rev:143,badge:"",desc:"Classic aviator sunglasses with a gold-toned metal frame and polarised gradient lenses."},
-  {id:15,name:"Oversized Square Frame",cat:"Eyewear",icon:"🟨",price:18000,old:24000,rating:4,rev:89,badge:"Sale",desc:"Fashion-forward oversized frames in tortoise shell pattern. The ultimate statement accessory."},
-  {id:16,name:"Rimless Luxury Readers",cat:"Eyewear",icon:"👓",price:32000,old:0,rating:5,rev:52,badge:"",desc:"Elegant rimless reading glasses with titanium bridge. Incredibly light with a premium feel."},
-  {id:17,name:"Structured Tote Bag",cat:"Bags",icon:"👜",price:55000,old:70000,rating:5,rev:78,badge:"Popular",desc:"Premium structured tote in vegan leather with polished gold hardware and a spacious organised interior."},
-  {id:18,name:"Mini Crossbody Luxe",cat:"Bags",icon:"👝",price:38000,old:0,rating:5,rev:94,badge:"",desc:"Compact crossbody bag with an adjustable gold chain strap and secure magnetic closure."},
-  {id:19,name:"Evening Clutch",cat:"Bags",icon:"💼",price:24000,old:32000,rating:4,rev:66,badge:"Elegant",desc:"Sleek evening clutch with a crystal-embellished clasp. The finishing touch for any formal occasion."},
-  {id:20,name:"Luxury Backpack",cat:"Bags",icon:"🎒",price:65000,old:0,rating:5,rev:47,badge:"New",desc:"Fashion-forward luxury leather-finish backpack with padded laptop compartment and gold zippers."},
-  {id:21,name:"Gold Waist Chain",cat:"Accessories",icon:"🎀",price:12000,old:18000,rating:5,rev:189,badge:"Hot",desc:"Delicate layered gold waist chain in 18K gold-plated brass. Fully adjustable length for a perfect fit."},
-  {id:22,name:"Silk Hair Scarf",cat:"Accessories",icon:"🧣",price:15000,old:0,rating:5,rev:134,badge:"",desc:"100% satin silk hair scarf with a luxury floral print. Protects hair while elevating your entire look."},
-  {id:23,name:"Statement Belt",cat:"Accessories",icon:"🔗",price:22000,old:28000,rating:4,rev:71,badge:"",desc:"Wide leather-finish statement belt with a designer gold-tone buckle. Transforms any outfit instantly."},
-  {id:24,name:"Luxury Brooch Pin",cat:"Accessories",icon:"📍",price:9500,old:0,rating:5,rev:103,badge:"Gift",desc:"Intricately designed gold-plated brooch. A timeless fashion accessory and the most thoughtful gift."}
+/* ════════════════════════════════════════
+   PRODUCT DATA CATALOGUE
+   Full 24-item luxury product list
+════════════════════════════════════════ */
+var PRODUCTS = [
+  { id:1,  name:'Diamond Pendant Necklace',  cat:'Jewelry',     icon:'💎', price:45000, old:60000,  rating:5, rev:124, badge:'Best Seller', desc:'Exquisite diamond pendant crafted in premium gold-plated sterling silver. Hypoallergenic and tarnish-resistant. Perfect for any occasion.' },
+  { id:2,  name:'Gold Chain Bracelet',       cat:'Jewelry',     icon:'✨', price:28000, old:0,      rating:5, rev:87,  badge:'',            desc:'Elegant 18K gold-plated chain bracelet. Lightweight and durable, ideal for everyday luxury wear.' },
+  { id:3,  name:'Pearl Drop Earrings',       cat:'Jewelry',     icon:'⭕', price:18000, old:24000,  rating:4, rev:203, badge:'Sale',         desc:'Classic freshwater pearl earrings set in sterling silver. Timeless elegance that suits every woman.' },
+  { id:4,  name:'Layered Gemstone Set',      cat:'Jewelry',     icon:'💍', price:55000, old:0,      rating:5, rev:56,  badge:'New',          desc:'Curated layered necklace set with vibrant colored gemstones — a complete statement look in one box.' },
+  { id:5,  name:'Classic Chronograph',       cat:'Watches',     icon:'⌚', price:85000, old:110000, rating:5, rev:89,  badge:'Best Seller',  desc:'Luxury chronograph with sapphire crystal glass and genuine leather strap. Swiss-inspired precision movement.' },
+  { id:6,  name:'Rose Gold Minimalist',      cat:'Watches',     icon:'🕐', price:62000, old:0,      rating:5, rev:74,  badge:'',            desc:'Ultra-slim rose gold timepiece with a clean minimalist dial. Built for the modern, elegant professional.' },
+  { id:7,  name:'Automatic Skeleton Watch',  cat:'Watches',     icon:'🔮', price:120000,old:150000, rating:5, rev:42,  badge:'Premium',      desc:'See-through skeleton dial showcasing the automatic movement inside. A true conversation piece on your wrist.' },
+  { id:8,  name:'Sports Luxury Watch',       cat:'Watches',     icon:'⏱️',price:78000, old:0,      rating:4, rev:61,  badge:'',            desc:'Water-resistant luxury sports watch with luminous hands, date display and premium stainless steel case.' },
+  { id:9,  name:'Oud Royale EDP',            cat:'Perfumes',    icon:'🌸', price:32000, old:42000,  rating:5, rev:203, badge:'Best Seller',  desc:'Deep and sensual oud fragrance with intoxicating notes of rose, amber and musk. Long-lasting 12+ hours.' },
+  { id:10, name:'Fleur de Luxe',             cat:'Perfumes',    icon:'🌷', price:28000, old:0,      rating:5, rev:167, badge:'',            desc:'Feminine floral perfume with vibrant top notes of jasmine and gardenia. A signature scent for every day.' },
+  { id:11, name:'Black Intense EDP',         cat:'Perfumes',    icon:'🖤', price:38000, old:48000,  rating:5, rev:95,  badge:'Limited',      desc:'Bold, masculine fragrance with rich woody and smoky notes. Commands respect, exudes presence.' },
+  { id:12, name:'Crystal Collection Set',    cat:'Perfumes',    icon:'💧', price:55000, old:0,      rating:4, rev:78,  badge:'Gift Set',      desc:'A luxurious gift set of three complementary fragrances in a premium glass presentation box.' },
+  { id:13, name:'Designer Cat-Eye Frames',   cat:'Eyewear',     icon:'🕶️',price:28000, old:36000,  rating:5, rev:67,  badge:'Trending',     desc:'Bold cat-eye silhouette with UV400 protection lenses and elegant gold-accented frames.' },
+  { id:14, name:'Aviator Gold Edition',      cat:'Eyewear',     icon:'✈️', price:22000, old:0,      rating:5, rev:143, badge:'',            desc:'Classic aviator sunglasses with a gold-toned metal frame and polarised gradient lenses.' },
+  { id:15, name:'Oversized Square Frame',    cat:'Eyewear',     icon:'🟨', price:18000, old:24000,  rating:4, rev:89,  badge:'Sale',         desc:'Fashion-forward oversized frames in tortoise shell pattern. The ultimate statement accessory.' },
+  { id:16, name:'Rimless Luxury Readers',    cat:'Eyewear',     icon:'👓', price:32000, old:0,      rating:5, rev:52,  badge:'',            desc:'Elegant rimless reading glasses with titanium bridge. Incredibly light with a premium feel.' },
+  { id:17, name:'Structured Tote Bag',       cat:'Bags',        icon:'👜', price:55000, old:70000,  rating:5, rev:78,  badge:'Popular',      desc:'Premium structured tote in vegan leather with polished gold hardware and a spacious organised interior.' },
+  { id:18, name:'Mini Crossbody Luxe',       cat:'Bags',        icon:'👝', price:38000, old:0,      rating:5, rev:94,  badge:'',            desc:'Compact crossbody bag with an adjustable gold chain strap and secure magnetic closure.' },
+  { id:19, name:'Evening Clutch',            cat:'Bags',        icon:'💼', price:24000, old:32000,  rating:4, rev:66,  badge:'Elegant',      desc:'Sleek evening clutch with a crystal-embellished clasp. The finishing touch for any formal occasion.' },
+  { id:20, name:'Luxury Backpack',           cat:'Bags',        icon:'🎒', price:65000, old:0,      rating:5, rev:47,  badge:'New',          desc:'Fashion-forward luxury leather-finish backpack with padded laptop compartment and gold zippers.' },
+  { id:21, name:'Gold Waist Chain',          cat:'Accessories', icon:'🎀', price:12000, old:18000,  rating:5, rev:189, badge:'Hot',           desc:'Delicate layered gold waist chain in 18K gold-plated brass. Fully adjustable for a perfect fit.' },
+  { id:22, name:'Silk Hair Scarf',           cat:'Accessories', icon:'🧣', price:15000, old:0,      rating:5, rev:134, badge:'',            desc:'100% satin silk hair scarf with a luxury floral print. Protects hair while elevating your look.' },
+  { id:23, name:'Statement Belt',            cat:'Accessories', icon:'🔗', price:22000, old:28000,  rating:4, rev:71,  badge:'',            desc:'Wide leather-finish statement belt with a designer gold-tone buckle. Transforms any outfit instantly.' },
+  { id:24, name:'Luxury Brooch Pin',         cat:'Accessories', icon:'📍', price:9500,  old:0,      rating:5, rev:103, badge:'Gift',          desc:'Intricately designed gold-plated brooch. A timeless fashion accessory and the most thoughtful gift.' }
 ];
 
-var activeCat = 'all';
-var currentPage = 1;
-var PER_PAGE = 12;
-var filtered = ALL.slice();
-var cartItems = [];
-var wishItems = [];
-var modalProduct = null;
-var toastTimer = null;
+/* ════════════════════════════════════════
+   APPLICATION STATE
+════════════════════════════════════════ */
+var state = {
+  cat:      'all',
+  search:   '',
+  sort:     '',
+  minPrice: null,
+  maxPrice: null,
+  minRating:null,
+  page:     1,
+  perPage:  12,
+  cart:     [],
+  wish:     [],
+  modalProduct: null,
+  toastTimer: null
+};
 
-function stars(n) {
-  var s = '';
-  for (var i=0;i<n;i++) s += '★';
-  for (var i=n;i<5;i++) s += '☆';
-  return s;
+/* ════════════════════════════════════════
+   UTILITIES
+════════════════════════════════════════ */
+/** Format naira with comma separator */
+function fmt(n) {
+  return Number(n).toLocaleString('en-NG');
 }
-function fmt(n) { return n.toLocaleString(); }
+
+/** Build star string from numeric rating */
+function stars(r) {
+  return '★'.repeat(r) + '☆'.repeat(5 - r);
+}
+
+/** Construct a WhatsApp order URL for a product */
 function waUrl(name, price) {
-  return 'https://wa.me/2349061538784?text=' + encodeURIComponent('Hello, I\'d like to order: ' + name + ' - \u20a6' + fmt(price));
-}
-function detailsUrl(name) {
-  return 'https://wa.me/2349061538784?text=' + encodeURIComponent('Hello, please send me more details about: ' + name);
+  return 'https://wa.me/2347073826150?text=' +
+    encodeURIComponent('Hello, I\'d like to order: ' + name + ' (₦' + fmt(price) + ') from Enny\'s Elegance & Co');
 }
 
-// ── THEME ──
+/** Produce a product detail WhatsApp URL */
+function detailsUrl(name) {
+  return 'https://wa.me/2347073826150?text=' +
+    encodeURIComponent('Hello, please send me more details about: ' + name);
+}
+
+/* ════════════════════════════════════════
+   THEME ENGINE
+════════════════════════════════════════ */
 function initTheme() {
   var saved = localStorage.getItem('eec_theme') || 'dark';
-  applyTheme(saved, false);
+  document.documentElement.setAttribute('data-theme', saved);
+  _syncThemeUI(saved === 'light');
 }
+
 function toggleTheme() {
-  var current = document.documentElement.getAttribute('data-theme') || 'dark';
-  var next = current === 'dark' ? 'light' : 'dark';
-  applyTheme(next, true);
+  var html    = document.documentElement;
+  var current = html.getAttribute('data-theme') === 'light';
+  var next    = current ? 'dark' : 'light';
+  html.setAttribute('data-theme', next);
   localStorage.setItem('eec_theme', next);
-}
-function applyTheme(theme, animate) {
-  document.documentElement.setAttribute('data-theme', theme);
-  var btn = document.getElementById('themeToggle');
-  if (btn) btn.textContent = theme === 'dark' ? '☀ Light Mode' : '● Dark Mode';
+  _syncThemeUI(!current);
 }
 
-// ── FILTERS ──
-function setCat(cat, el) {
-  activeCat = cat;
-  document.querySelectorAll('.cat-btn').forEach(function(b){ b.classList.remove('active'); });
-  el.classList.add('active');
-  applyFilters();
-  if (window.innerWidth < 900) closeSidebar();
+function _syncThemeUI(isLight) {
+  var icon  = document.getElementById('togIcon');
+  var label = document.getElementById('togLabel');
+  if (icon)  icon.textContent  = isLight ? '🌑' : '☀';
+  if (label) label.textContent = isLight ? 'Dark' : 'Light';
 }
 
+/* ════════════════════════════════════════
+   FILTER & SORT ENGINE
+════════════════════════════════════════ */
 function applyFilters() {
-  var q = document.getElementById('searchInput').value.toLowerCase().trim();
-  var mn = parseFloat(document.getElementById('pMin').value) || 0;
-  var mx = parseFloat(document.getElementById('pMax').value) || Infinity;
+  state.search   = (document.getElementById('searchInput').value  || '').toLowerCase().trim();
+  state.sort     = document.getElementById('sortSelect').value;
+  state.minPrice = parseFloat(document.getElementById('pMin').value) || null;
+  state.maxPrice = parseFloat(document.getElementById('pMax').value) || null;
+
   var ratEl = document.querySelector('input[name="rat"]:checked');
-  var minRat = ratEl ? (parseFloat(ratEl.value) || 0) : 0;
-  var sort = document.getElementById('sortSel').value;
+  state.minRating = ratEl ? (parseFloat(ratEl.value) || null) : null;
 
-  filtered = ALL.filter(function(p) {
-    if (activeCat !== 'all' && p.cat !== activeCat) return false;
-    if (q && p.name.toLowerCase().indexOf(q) < 0 && p.cat.toLowerCase().indexOf(q) < 0) return false;
-    if (p.price < mn || p.price > mx) return false;
-    if (p.rating < minRat) return false;
-    return true;
-  });
+  state.page = 1; // reset to first page on any filter change
+  renderProducts();
+}
 
-  if (sort === 'price-asc') filtered.sort(function(a,b){ return a.price-b.price; });
-  else if (sort === 'price-desc') filtered.sort(function(a,b){ return b.price-a.price; });
-  else if (sort === 'name') filtered.sort(function(a,b){ return a.name.localeCompare(b.name); });
-  else if (sort === 'rating') filtered.sort(function(a,b){ return b.rating-a.rating || b.rev-a.rev; });
-
-  currentPage = 1;
+function setCat(cat, btn) {
+  state.cat  = cat;
+  state.page = 1;
+  document.querySelectorAll('.cat-btn').forEach(function(b) { b.classList.remove('active'); });
+  if (btn) btn.classList.add('active');
   renderProducts();
 }
 
 function clearFilters() {
-  activeCat = 'all';
+  state.cat      = 'all';
+  state.search   = '';
+  state.sort     = '';
+  state.minPrice = null;
+  state.maxPrice = null;
+  state.minRating= null;
+  state.page     = 1;
+
   document.getElementById('searchInput').value = '';
-  document.getElementById('pMin').value = '';
-  document.getElementById('pMax').value = '';
-  var firstRat = document.querySelector('input[name="rat"]');
-  if (firstRat) firstRat.checked = true;
-  document.getElementById('sortSel').value = '';
-  document.querySelectorAll('.cat-btn').forEach(function(b,i){ b.classList.toggle('active', i===0); });
-  applyFilters();
+  document.getElementById('sortSelect').value  = '';
+  document.getElementById('pMin').value        = '';
+  document.getElementById('pMax').value        = '';
+  var defRat = document.querySelector('input[name="rat"][value=""]');
+  if (defRat) defRat.checked = true;
+
+  document.querySelectorAll('.cat-btn').forEach(function(b) { b.classList.remove('active'); });
+  var allBtn = document.querySelector('.cat-btn:first-child');
+  if (allBtn) allBtn.classList.add('active');
+
+  renderProducts();
 }
 
-// ── RENDER ──
-function renderProducts() {
-  var grid = document.getElementById('pGrid');
-  var start = (currentPage-1)*PER_PAGE;
-  var page = filtered.slice(start, start+PER_PAGE);
-  var lbl = document.getElementById('resultLabel');
-  if (lbl) lbl.textContent = filtered.length + ' product' + (filtered.length !== 1 ? 's' : '');
+/** Return filtered + sorted products array */
+function getFiltered() {
+  var list = PRODUCTS.slice();
 
-  if (!page.length) {
-    grid.innerHTML = '<div class="empty-state">'
-      + '<div class="empty-icon">🔍</div>'
-      + '<h3>No Products Found</h3>'
-      + '<p>Try adjusting your search or category filters.</p>'
-      + '<button class="btn-gold-sm" onclick="clearFilters()">Clear Filters</button>'
-      + '</div>';
-    document.getElementById('pagination').innerHTML = '';
+  if (state.cat !== 'all')
+    list = list.filter(function(p) { return p.cat === state.cat; });
+  if (state.search)
+    list = list.filter(function(p) {
+      return p.name.toLowerCase().includes(state.search) ||
+             p.cat.toLowerCase().includes(state.search);
+    });
+  if (state.minPrice !== null)
+    list = list.filter(function(p) { return p.price >= state.minPrice; });
+  if (state.maxPrice !== null)
+    list = list.filter(function(p) { return p.price <= state.maxPrice; });
+  if (state.minRating !== null)
+    list = list.filter(function(p) { return p.rating >= state.minRating; });
+
+  switch (state.sort) {
+    case 'price-asc':  list.sort(function(a,b){ return a.price - b.price; });  break;
+    case 'price-desc': list.sort(function(a,b){ return b.price - a.price; });  break;
+    case 'name':       list.sort(function(a,b){ return a.name.localeCompare(b.name); }); break;
+    case 'rating':     list.sort(function(a,b){ return b.rating - a.rating; }); break;
+  }
+  return list;
+}
+
+/* ════════════════════════════════════════
+   RENDER — PRODUCTS GRID
+════════════════════════════════════════ */
+function renderProducts() {
+  var filtered = getFiltered();
+  var total    = filtered.length;
+  var pages    = Math.ceil(total / state.perPage);
+  state.page   = Math.min(state.page, pages || 1);
+  var start    = (state.page - 1) * state.perPage;
+  var slice    = filtered.slice(start, start + state.perPage);
+
+  var grid = document.getElementById('productGrid');
+  var lbl  = document.getElementById('resultLabel');
+
+  lbl.textContent = total + ' product' + (total !== 1 ? 's' : '');
+
+  if (!slice.length) {
+    grid.innerHTML =
+      '<div class="empty-state">' +
+        '<span class="empty-icon" aria-hidden="true">🔍</span>' +
+        '<h3>No Products Found</h3>' +
+        '<p>Try adjusting your filters or search term.</p>' +
+        '<button class="btn-clear-empty" onclick="clearFilters()">Clear Filters</button>' +
+      '</div>';
+    renderPagination(0, 0);
     return;
   }
 
-  var html = '';
-  for (var i=0; i<page.length; i++) {
-    var p = page[i];
-    var inW = wishItems.some(function(w){ return w.id===p.id; });
-    var inC = cartItems.some(function(c){ return c.id===p.id; });
-    html += '<div class="pc">';
-    if (p.badge) html += '<div class="pc-badge">' + p.badge + '</div>';
-    html += '<div class="pc-img">';
-    html += '<div class="pc-glow"></div>';
-    html += '<div class="pc-overlay"><button class="pc-qv" onclick="openModal(' + p.id + ')">Quick View</button></div>';
-    html += '<span class="pc-icon">' + p.icon + '</span>';
-    html += '</div>';
-    html += '<button class="pc-wish' + (inW?' liked':'') + '" onclick="toggleWish(' + p.id + ',this)">' + (inW?'♥':'♡') + '</button>';
-    html += '<div class="pc-info">';
-    html += '<div class="pc-cat">' + p.cat + '</div>';
-    html += '<div class="pc-name">' + p.name + '</div>';
-    html += '<div class="pc-price">&#8358;&nbsp;' + fmt(p.price) + (p.old ? ' <s>&#8358;&nbsp;' + fmt(p.old) + '</s>' : '') + '</div>';
-    html += '<div class="pc-stars">' + stars(p.rating) + ' <span>(' + p.rev + ')</span></div>';
-    html += '<div class="pc-actions">';
-    html += '<a href="' + waUrl(p.name, p.price) + '" target="_blank" class="btn-wa-p">💬 Order On WhatsApp</a>';
-    html += '<button class="btn-cart-p' + (inC?' added':'') + '" onclick="addToCart(' + p.id + ',this)">' + (inC?'✓ Added':'🛒 Add to Cart') + '</button>';
-    html += '</div></div></div>';
-  }
-  grid.innerHTML = html;
-  renderPagination();
+  grid.innerHTML = slice.map(function(p) {
+    var inWish = state.wish.indexOf(p.id) > -1;
+    return (
+      '<article class="pc" data-id="' + p.id + '">' +
+        (p.badge ? '<div class="pc-badge">' + p.badge + '</div>' : '') +
+        '<button class="pc-wish' + (inWish ? ' liked' : '') + '"' +
+          ' onclick="toggleWish(' + p.id + ',this)" aria-label="' + (inWish ? 'Remove from' : 'Add to') + ' wishlist">' +
+          (inWish ? '♥' : '♡') +
+        '</button>' +
+        '<div class="pc-img">' +
+          '<div class="pc-glow" aria-hidden="true"></div>' +
+          '<div class="pc-icon" aria-hidden="true">' + p.icon + '</div>' +
+          '<div class="pc-overlay">' +
+            '<button class="pc-qv" onclick="openModal(' + p.id + ')">Quick View</button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="pc-info">' +
+          '<div class="pc-cat">' + p.cat + '</div>' +
+          '<h2 class="pc-name">' + p.name + '</h2>' +
+          '<div class="pc-price">₦&nbsp;' + fmt(p.price) +
+            (p.old ? ' <s>₦&nbsp;' + fmt(p.old) + '</s>' : '') +
+          '</div>' +
+          '<div class="pc-stars">' + stars(p.rating) +
+            ' <span>(' + p.rev + ')</span></div>' +
+          '<div class="pc-actions">' +
+            '<a href="' + waUrl(p.name, p.price) + '" target="_blank" rel="noopener" class="btn-wa-card">💬 Order on WhatsApp</a>' +
+            '<button class="btn-cart-card" onclick="addToCart(' + p.id + ',this)">🛒 Add to Cart</button>' +
+          '</div>' +
+        '</div>' +
+      '</article>'
+    );
+  }).join('');
+
+  renderPagination(pages, state.page);
 }
 
-function renderPagination() {
-  var total = Math.ceil(filtered.length / PER_PAGE);
-  var pg = document.getElementById('pagination');
-  if (total <= 1) { pg.innerHTML = ''; return; }
-  var h = '';
-  if (currentPage > 1) h += '<button class="pg-btn" onclick="goPage(' + (currentPage-1) + ')">&#8249;</button>';
-  for (var i=1; i<=total; i++) {
-    if (i===1||i===total||Math.abs(i-currentPage)<=1) {
-      h += '<button class="pg-btn' + (i===currentPage?' active':'') + '" onclick="goPage('+i+')">'+i+'</button>';
-    } else if (Math.abs(i-currentPage)===2) {
-      h += '<span class="pg-dots">…</span>';
+/* ════════════════════════════════════════
+   RENDER — PAGINATION
+════════════════════════════════════════ */
+function renderPagination(totalPages, current) {
+  var el = document.getElementById('pagination');
+  if (totalPages <= 1) { el.innerHTML = ''; return; }
+
+  var html = '';
+  html += '<button class="pg-btn" onclick="gotoPage(' + (current - 1) + ')" ' +
+          (current <= 1 ? 'disabled style="opacity:.3;cursor:default"' : '') + ' aria-label="Previous page">←</button>';
+
+  for (var i = 1; i <= totalPages; i++) {
+    if (i === 1 || i === totalPages || (i >= current - 1 && i <= current + 1)) {
+      html += '<button class="pg-btn' + (i === current ? ' active' : '') + '"' +
+              ' onclick="gotoPage(' + i + ')" aria-label="Page ' + i + '" aria-current="' + (i===current?'page':'false') + '">' + i + '</button>';
+    } else if (i === current - 2 || i === current + 2) {
+      html += '<span class="pg-ellipsis" aria-hidden="true">…</span>';
     }
   }
-  if (currentPage < total) h += '<button class="pg-btn" onclick="goPage(' + (currentPage+1) + ')">&#8250;</button>';
-  pg.innerHTML = h;
+
+  html += '<button class="pg-btn" onclick="gotoPage(' + (current + 1) + ')" ' +
+          (current >= totalPages ? 'disabled style="opacity:.3;cursor:default"' : '') + ' aria-label="Next page">→</button>';
+
+  el.innerHTML = html;
 }
 
-function goPage(p) {
-  currentPage = p;
+function gotoPage(n) {
+  var filtered = getFiltered();
+  var pages    = Math.ceil(filtered.length / state.perPage);
+  state.page   = Math.max(1, Math.min(n, pages));
   renderProducts();
-  var layout = document.querySelector('.layout');
-  if (layout) layout.scrollIntoView({behavior:'smooth'});
+  document.querySelector('.products-area').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-// ── CART ──
+/* ════════════════════════════════════════
+   CART SYSTEM
+════════════════════════════════════════ */
 function addToCart(id, btn) {
-  var p = ALL.find(function(x){ return x.id===id; });
-  if (!p) return;
-  var ex = cartItems.find(function(c){ return c.id===id; });
-  if (ex) { ex.qty++; } else { cartItems.push({id:p.id,name:p.name,icon:p.icon,price:p.price,qty:1}); }
+  var product = PRODUCTS.find(function(p) { return p.id === id; });
+  if (!product) return;
+
+  var existing = state.cart.find(function(c) { return c.id === id; });
+  if (existing) {
+    existing.qty++;
+  } else {
+    state.cart.push({ id: id, qty: 1 });
+  }
+
   updateCartBadge();
+  showToast('Added to cart: ' + product.name);
+
   if (btn) {
-    btn.classList.add('added'); btn.textContent = '✓ Added';
-    setTimeout(function(){ btn.classList.remove('added'); btn.textContent = '🛒 Add to Cart'; }, 2000);
+    btn.textContent = '✓ Added';
+    btn.classList.add('added');
+    setTimeout(function() {
+      btn.textContent = '🛒 Add to Cart';
+      btn.classList.remove('added');
+    }, 1800);
   }
-  showToast('"' + p.name + '" added to cart');
 }
 
-function updateCartBadge() {
-  var total = cartItems.reduce(function(s,c){ return s+c.qty; }, 0);
-  var b = document.getElementById('cartBadge');
-  if (b) b.textContent = total;
-}
-
-function openCart() {
+function removeFromCart(id) {
+  state.cart = state.cart.filter(function(c) { return c.id !== id; });
+  updateCartBadge();
   renderCartPanel();
-  document.getElementById('cartPanel').classList.add('open');
-  document.getElementById('panelOv').classList.add('show');
-}
-function closeCart() {
-  document.getElementById('cartPanel').classList.remove('open');
-  document.getElementById('panelOv').classList.remove('show');
-}
-
-function renderCartPanel() {
-  var body = document.getElementById('cartBody');
-  var footer = document.getElementById('cartFooter');
-  if (!cartItems.length) {
-    body.innerHTML = '<div class="cart-empty"><div class="ce-icon">🛒</div><p>Your cart is empty.<br>Browse our collections and find something you love.</p></div>';
-    if (footer) footer.style.display = 'none';
-    return;
-  }
-  var html = '';
-  for (var i=0; i<cartItems.length; i++) {
-    var c = cartItems[i];
-    html += '<div class="cart-item">';
-    html += '<div class="ci-icon">' + c.icon + '</div>';
-    html += '<div class="ci-info"><div class="ci-name">' + c.name + '</div>';
-    html += '<div class="ci-price">&#8358;&nbsp;' + fmt(c.price*c.qty) + '</div>';
-    html += '<div class="ci-qty"><button onclick="changeQty(' + c.id + ',-1)">&#8722;</button>';
-    html += '<span>' + c.qty + '</span>';
-    html += '<button onclick="changeQty(' + c.id + ',1)">+</button></div></div>';
-    html += '<button class="ci-remove" onclick="removeCart(' + c.id + ')">&#x2715;</button>';
-    html += '</div>';
-  }
-  body.innerHTML = html;
-  var total = cartItems.reduce(function(s,c){ return s+c.price*c.qty; }, 0);
-  var ct = document.getElementById('cartTotal');
-  if (ct) ct.textContent = '₦ ' + fmt(total);
-  var cwa = document.getElementById('cartWaBtn');
-  if (cwa) {
-    var lines = cartItems.map(function(c){ return c.name+' x'+c.qty+' - ₦'+fmt(c.price*c.qty); }).join('\n');
-    cwa.href = 'https://wa.me/2349061538784?text=' + encodeURIComponent('Hello, I\'d like to order:\n' + lines + '\nTotal: ₦' + fmt(total));
-  }
-  if (footer) footer.style.display = 'block';
 }
 
 function changeQty(id, delta) {
-  var item = cartItems.find(function(c){ return c.id===id; });
+  var item = state.cart.find(function(c) { return c.id === id; });
   if (!item) return;
   item.qty = Math.max(1, item.qty + delta);
   updateCartBadge();
   renderCartPanel();
 }
-function removeCart(id) {
-  cartItems = cartItems.filter(function(c){ return c.id!==id; });
-  updateCartBadge();
+
+function updateCartBadge() {
+  var total = state.cart.reduce(function(s, c) { return s + c.qty; }, 0);
+  document.getElementById('cartBadge').textContent = total;
+}
+
+function openCart() {
   renderCartPanel();
-  renderProducts();
+  document.getElementById('cartPanel').classList.add('open');
+  document.getElementById('panelOverlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
 }
 
-// ── WISHLIST ──
-function toggleWish(id, btn) {
-  var p = ALL.find(function(x){ return x.id===id; });
-  if (!p) return;
-  var idx = wishItems.findIndex(function(w){ return w.id===id; });
-  if (idx >= 0) {
-    wishItems.splice(idx, 1);
-    if (btn) { btn.classList.remove('liked'); btn.textContent = '♡'; }
-    showToast('Removed from wishlist');
-  } else {
-    wishItems.push(p);
-    if (btn) { btn.classList.add('liked'); btn.textContent = '♥'; }
-    showToast('"' + p.name + '" added to wishlist');
-  }
+function closeCart() {
+  document.getElementById('cartPanel').classList.remove('open');
+  document.getElementById('panelOverlay').classList.remove('show');
+  document.body.style.overflow = '';
 }
 
-function openWish() {
-  renderWishPanel();
-  document.getElementById('wishPanel').classList.add('open');
-  document.getElementById('panelOv').classList.add('show');
+function closePanels() {
+  closeCart();
 }
-function closeWish() {
-  document.getElementById('wishPanel').classList.remove('open');
-  document.getElementById('panelOv').classList.remove('show');
-}
-function renderWishPanel() {
-  var body = document.getElementById('wishBody');
-  if (!wishItems.length) {
-    body.innerHTML = '<div class="wish-empty"><div class="we-icon">♡</div><p>Your wishlist is empty.<br>Tap ♡ on any product to save it here.</p></div>';
+
+function renderCartPanel() {
+  var body   = document.getElementById('cartBody');
+  var footer = document.getElementById('cartFooter');
+
+  if (!state.cart.length) {
+    body.innerHTML =
+      '<div class="panel-empty">' +
+        '<span class="panel-empty-icon" aria-hidden="true">🛒</span>' +
+        '<p>Your cart is empty.<br>Start browsing to add items.</p>' +
+      '</div>';
+    footer.style.display = 'none';
     return;
   }
-  var html = '';
-  for (var i=0; i<wishItems.length; i++) {
-    var w = wishItems[i];
-    html += '<div class="wish-item">';
-    html += '<div class="wi-icon">' + w.icon + '</div>';
-    html += '<div class="wi-info"><div class="wi-name">' + w.name + '</div><div class="wi-price">&#8358;&nbsp;' + fmt(w.price) + '</div></div>';
-    html += '<button class="wi-remove" onclick="removeWish(' + w.id + ')">&#x2715;</button>';
-    html += '</div>';
-  }
-  body.innerHTML = html;
-}
-function removeWish(id) {
-  wishItems = wishItems.filter(function(w){ return w.id!==id; });
-  renderWishPanel();
-  renderProducts();
-}
-function closePanels() { closeCart(); closeWish(); }
 
-// ── MODAL ──
+  var totalNaira = 0;
+  var cartLines  = [];
+
+  state.cart.forEach(function(c) {
+    var p = PRODUCTS.find(function(x) { return x.id === c.id; });
+    if (!p) return;
+    totalNaira += p.price * c.qty;
+    cartLines.push(p.name + ' x' + c.qty + ' (₦' + fmt(p.price * c.qty) + ')');
+    body.innerHTML += ''; // accumulate below
+  });
+
+  body.innerHTML = state.cart.map(function(c) {
+    var p = PRODUCTS.find(function(x) { return x.id === c.id; });
+    if (!p) return '';
+    return (
+      '<div class="cart-item">' +
+        '<div class="item-icon-wrap" aria-hidden="true">' + p.icon + '</div>' +
+        '<div class="item-info">' +
+          '<div class="item-name">' + p.name + '</div>' +
+          '<div class="item-price">₦&nbsp;' + fmt(p.price) + '</div>' +
+          '<div class="item-qty">' +
+            '<button class="qty-btn" onclick="changeQty(' + p.id + ',-1)" aria-label="Decrease quantity">−</button>' +
+            '<span class="qty-val" aria-label="Quantity">' + c.qty + '</span>' +
+            '<button class="qty-btn" onclick="changeQty(' + p.id + ',1)" aria-label="Increase quantity">+</button>' +
+          '</div>' +
+        '</div>' +
+        '<button class="item-remove" onclick="removeFromCart(' + p.id + ')" aria-label="Remove ' + p.name + ' from cart">✕</button>' +
+      '</div>'
+    );
+  }).join('');
+
+  footer.style.display = 'block';
+  document.getElementById('cartTotal').textContent = '₦ ' + fmt(totalNaira);
+
+  var msg = 'Hello, I\'d like to order the following from Enny\'s Elegance & Co:\n\n' +
+            cartLines.join('\n') + '\n\nTotal: ₦' + fmt(totalNaira);
+  document.getElementById('cartCheckoutBtn').href =
+    'https://wa.me/2347073826150?text=' + encodeURIComponent(msg);
+}
+
+/* ════════════════════════════════════════
+   WISHLIST SYSTEM
+════════════════════════════════════════ */
+function toggleWish(id, btn) {
+  var idx = state.wish.indexOf(id);
+  if (idx > -1) {
+    state.wish.splice(idx, 1);
+    btn.classList.remove('liked');
+    btn.textContent = '♡';
+    btn.setAttribute('aria-label', 'Add to wishlist');
+    showToast('Removed from wishlist');
+  } else {
+    state.wish.push(id);
+    btn.classList.add('liked');
+    btn.textContent = '♥';
+    btn.setAttribute('aria-label', 'Remove from wishlist');
+    var p = PRODUCTS.find(function(x) { return x.id === id; });
+    showToast(p ? p.name + ' added to wishlist' : 'Added to wishlist');
+  }
+}
+
+/* ════════════════════════════════════════
+   QUICK VIEW MODAL
+════════════════════════════════════════ */
 function openModal(id) {
-  var p = ALL.find(function(x){ return x.id===id; });
+  var p = PRODUCTS.find(function(x) { return x.id === id; });
   if (!p) return;
-  modalProduct = p;
-  document.getElementById('mIcon').textContent = p.icon;
-  document.getElementById('mCat').textContent = p.cat;
-  document.getElementById('mName').textContent = p.name;
-  document.getElementById('mPrice').innerHTML = '&#8358;&nbsp;' + fmt(p.price) + (p.old ? ' <s>&#8358;&nbsp;' + fmt(p.old) + '</s>' : '');
-  document.getElementById('mStars').textContent = stars(p.rating) + ' (' + p.rev + ' reviews)';
-  document.getElementById('mDesc').textContent = p.desc;
-  document.getElementById('mWaBtn').href = waUrl(p.name, p.price);
-  document.getElementById('mDetailsBtn').href = detailsUrl(p.name);
-  var mc = document.getElementById('mCartBtn');
-  mc.textContent = '🛒 Add to Cart';
-  mc.className = 'm-cart';
+  state.modalProduct = p;
+
+  document.getElementById('modalIcon').textContent    = p.icon;
+  document.getElementById('modalCat').textContent     = p.cat;
+  document.getElementById('modalName').textContent    = p.name;
+  document.getElementById('modalPrice').innerHTML     = '₦&nbsp;' + fmt(p.price) +
+    (p.old ? ' <s>₦&nbsp;' + fmt(p.old) + '</s>' : '');
+  document.getElementById('modalStars').textContent   = stars(p.rating) + ' (' + p.rev + ' reviews)';
+  document.getElementById('modalDesc').textContent    = p.desc;
+  document.getElementById('modalWaBtn').href          = waUrl(p.name, p.price);
+  document.getElementById('modalDetailsBtn').href     = detailsUrl(p.name);
+
+  var cartBtn = document.getElementById('modalCartBtn');
+  cartBtn.textContent = '🛒 Add to Cart';
+  cartBtn.style.borderColor = '';
+  cartBtn.style.color = '';
+
   document.getElementById('modal').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
+
 function closeModal() {
   document.getElementById('modal').classList.remove('open');
   document.body.style.overflow = '';
 }
-function closeModalOv(e) { if (e.target === e.currentTarget) closeModal(); }
-document.addEventListener('keydown', function(e){ if (e.key==='Escape') closeModal(); });
-function modalCart() {
-  if (!modalProduct) return;
-  addToCart(modalProduct.id, null);
-  var mc = document.getElementById('mCartBtn');
-  mc.textContent = '✓ Added to Cart';
-  mc.style.borderColor = '#2ecc71';
-  mc.style.color = '#2ecc71';
+
+function closeModalOv(e) {
+  if (e.target === e.currentTarget) closeModal();
 }
 
-// ── TOAST ──
+function modalAddCart() {
+  if (!state.modalProduct) return;
+  addToCart(state.modalProduct.id, null);
+  var btn = document.getElementById('modalCartBtn');
+  btn.textContent = '✓ Added to Cart';
+  btn.style.borderColor = '#2ecc71';
+  btn.style.color = '#2ecc71';
+}
+
+/* Dismiss modal on Escape key */
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeModal();
+});
+
+/* ════════════════════════════════════════
+   TOAST NOTIFICATION
+════════════════════════════════════════ */
 function showToast(msg) {
   var t = document.getElementById('toast');
   t.textContent = msg;
-  clearTimeout(toastTimer);
+  clearTimeout(state.toastTimer);
   t.classList.add('show');
-  toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 2800);
+  state.toastTimer = setTimeout(function() { t.classList.remove('show'); }, 2800);
 }
 
-// ── SIDEBAR ──
+/* ════════════════════════════════════════
+   SIDEBAR (mobile filter panel)
+════════════════════════════════════════ */
 function toggleSidebar() {
-  document.getElementById('sidebar').classList.toggle('open');
-  document.getElementById('panelOv').classList.toggle('show');
+  var sb  = document.getElementById('sidebar');
+  var btn = document.getElementById('filterBtn');
+  var ov  = document.getElementById('panelOverlay');
+  var open = sb.classList.toggle('open');
+  btn.setAttribute('aria-expanded', open);
+  ov.classList.toggle('show', open);
 }
+
 function closeSidebar() {
   document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('filterBtn').setAttribute('aria-expanded', 'false');
+  document.getElementById('panelOverlay').classList.remove('show');
 }
 
-// ── INIT ──
+/* ════════════════════════════════════════
+   DRAGGABLE FLOATING WHATSAPP BUTTON
+════════════════════════════════════════ */
+(function initDragWA() {
+  var el = document.querySelector('.float-wa');
+  if (!el) return;
+
+  var isDragging = false, hasMoved = false;
+  var sx, sy, sl, sb;
+
+  function getPos() {
+    var r = el.getBoundingClientRect();
+    return { left: r.left, bottom: window.innerHeight - r.bottom };
+  }
+
+  function start(e) {
+    if (e.target.tagName === 'A' && !hasMoved) return;
+    isDragging = true; hasMoved = false;
+    el.classList.add('dragging');
+    var p = getPos(), c = e.touches ? e.touches[0] : e;
+    sx = c.clientX; sy = c.clientY; sl = p.left; sb = p.bottom;
+    el.style.right  = 'auto';
+    el.style.left   = sl + 'px';
+    el.style.bottom = sb + 'px';
+    el.style.top    = 'auto';
+    e.preventDefault();
+  }
+
+  function move(e) {
+    if (!isDragging) return;
+    var c = e.touches ? e.touches[0] : e;
+    var dx = c.clientX - sx, dy = c.clientY - sy;
+    if (Math.abs(dx) > 4 || Math.abs(dy) > 4) hasMoved = true;
+    el.style.left   = Math.max(8, Math.min(window.innerWidth  - el.offsetWidth  - 8, sl + dx)) + 'px';
+    el.style.bottom = Math.max(8, Math.min(window.innerHeight - el.offsetHeight - 8, sb - dy)) + 'px';
+    e.preventDefault();
+  }
+
+  function end(e) {
+    if (!isDragging) return;
+    isDragging = false;
+    el.classList.remove('dragging');
+    if (hasMoved) {
+      try { localStorage.setItem('eec_wa_pos', JSON.stringify({ left: el.style.left, bottom: el.style.bottom })); } catch(_) {}
+      e.preventDefault();
+    }
+  }
+
+  // Restore saved position
+  try {
+    var saved = JSON.parse(localStorage.getItem('eec_wa_pos'));
+    if (saved && saved.left && saved.bottom) {
+      el.style.right  = 'auto';
+      el.style.left   = saved.left;
+      el.style.bottom = saved.bottom;
+    }
+  } catch(_) {}
+
+  el.addEventListener('mousedown',  start);
+  el.addEventListener('touchstart', start, { passive: false });
+  document.addEventListener('mousemove',  move);
+  document.addEventListener('touchmove',  move, { passive: false });
+  document.addEventListener('mouseup',    end);
+  document.addEventListener('touchend',   end);
+  el.addEventListener('click', function(e) {
+    if (hasMoved) { e.preventDefault(); e.stopPropagation(); hasMoved = false; }
+  }, true);
+})();
+
+/* ════════════════════════════════════════
+   INITIALISE
+════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', function() {
   initTheme();
-  applyFilters();
+  renderProducts();
 });
-
 </script>
 </body>
 </html>
